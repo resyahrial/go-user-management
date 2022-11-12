@@ -17,6 +17,7 @@ func InitRoutes(r *gin.Engine, db *gorm.DB, hashCost int) *gin.Engine {
 	userPath := v1Path.Group("/users")
 	{
 		v1_routes.CreateUserRoute(userPath)
+		v1_routes.UpdateUserRoute(userPath)
 	}
 
 	return r

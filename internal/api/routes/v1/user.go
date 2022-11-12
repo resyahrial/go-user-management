@@ -7,3 +7,7 @@ import (
 func CreateUserRoute(router *gin.RouterGroup) {
 	router.POST("", func(c *gin.Context) { Handler.CreateUser(c) })
 }
+
+func UpdateUserRoute(router *gin.RouterGroup) {
+	router.POST("/:id", func(c *gin.Context) { Handler.UpdateUser(c) })
+}
