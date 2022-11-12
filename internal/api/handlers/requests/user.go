@@ -8,9 +8,9 @@ import (
 )
 
 type CreateUserRequest struct {
-	Name     string `json:"name"`
-	Email    string `json:"email" validate:"email"`
-	Password string `json:"password"`
+	Name     string `json:"name" validate:"required"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,alphanum,min=8"`
 }
 
 func (r *CreateUserRequest) CastToUserEntity() (user *entities.User, err error) {
