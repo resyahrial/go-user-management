@@ -3,8 +3,8 @@ package models_test
 import (
 	"testing"
 
-	"github.com/resyahrial/go-template/internal/entities"
-	"github.com/resyahrial/go-template/internal/repositories/pg/models"
+	"github.com/resyahrial/go-user-management/internal/entities"
+	"github.com/resyahrial/go-user-management/internal/repositories/pg/models"
 	"github.com/segmentio/ksuid"
 	"github.com/stretchr/testify/assert"
 )

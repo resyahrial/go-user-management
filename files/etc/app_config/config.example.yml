@@ -1,5 +1,5 @@
 app:
-  name: "go-template"
+  name: "go-user-management"
   host: "localhost"
   port: 8080
   debug: true

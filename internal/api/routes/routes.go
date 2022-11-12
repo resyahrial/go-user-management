@@ -2,8 +2,8 @@ package route
 
 import (
 	"github.com/gin-gonic/gin"
-	v1_handlers "github.com/resyahrial/go-template/internal/api/handlers/v1"
-	v1_routes "github.com/resyahrial/go-template/internal/api/routes/v1"
+	v1_handlers "github.com/resyahrial/go-user-management/internal/api/handlers/v1"
+	v1_routes "github.com/resyahrial/go-user-management/internal/api/routes/v1"
 	"gorm.io/gorm"
 )
 

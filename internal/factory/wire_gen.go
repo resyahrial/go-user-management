@@ -8,9 +8,9 @@ package factory
 
 import (
 	"github.com/google/wire"
-	"github.com/resyahrial/go-template/internal/entities"
-	"github.com/resyahrial/go-template/internal/repositories/pg/repo/user"
-	"github.com/resyahrial/go-template/internal/usecase/user"
+	"github.com/resyahrial/go-user-management/internal/entities"
+	"github.com/resyahrial/go-user-management/internal/repositories/pg/repo/user"
+	"github.com/resyahrial/go-user-management/internal/usecase/user"
 	"gorm.io/gorm"
 )
 

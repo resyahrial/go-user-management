@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/resyahrial/go-template/internal/entities"
+	"github.com/resyahrial/go-user-management/internal/entities"
 )
 
 func (u *UserUsecaseImpl) CreateUser(ctx context.Context, input *entities.User) (user *entities.User, err error) {

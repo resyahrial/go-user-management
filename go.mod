@@ -1,4 +1,4 @@
-module github.com/resyahrial/go-template
+module github.com/resyahrial/go-user-management
 
 go 1.18
 

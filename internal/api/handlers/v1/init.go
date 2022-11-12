@@ -1,8 +1,8 @@
 package v1
 
 import (
-	"github.com/resyahrial/go-template/internal/entities"
-	"github.com/resyahrial/go-template/internal/factory"
+	"github.com/resyahrial/go-user-management/internal/entities"
+	"github.com/resyahrial/go-user-management/internal/factory"
 	"gorm.io/gorm"
 )
 

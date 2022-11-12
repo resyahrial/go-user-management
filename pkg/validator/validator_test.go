@@ -3,7 +3,7 @@ package validator_test
 import (
 	"testing"
 
-	"github.com/resyahrial/go-template/pkg/validator"
+	"github.com/resyahrial/go-user-management/pkg/validator"
 	"github.com/stretchr/testify/suite"
 )
 

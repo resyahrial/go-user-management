@@ -1,4 +1,4 @@
-# go-template
+# go-user-management
 
 boiler plate go project
 

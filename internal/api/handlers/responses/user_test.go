@@ -3,8 +3,8 @@ package response_test
 import (
 	"testing"
 
-	response "github.com/resyahrial/go-template/internal/api/handlers/responses"
-	"github.com/resyahrial/go-template/internal/entities"
+	response "github.com/resyahrial/go-user-management/internal/api/handlers/responses"
+	"github.com/resyahrial/go-user-management/internal/entities"
 	"github.com/stretchr/testify/suite"
 )
 

@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/resyahrial/go-template/config"
-	route "github.com/resyahrial/go-template/internal/api/routes"
-	"github.com/resyahrial/go-template/internal/api/server"
-	"github.com/resyahrial/go-template/internal/repositories/pg"
-	"github.com/resyahrial/go-template/pkg/graceful"
+	"github.com/resyahrial/go-user-management/config"
+	route "github.com/resyahrial/go-user-management/internal/api/routes"
+	"github.com/resyahrial/go-user-management/internal/api/server"
+	"github.com/resyahrial/go-user-management/internal/repositories/pg"
+	"github.com/resyahrial/go-user-management/pkg/graceful"
 )
 
 type (
