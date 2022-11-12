@@ -78,11 +78,11 @@ func (h *Handler) GetDetail(c *gin.Context) {
 		user *entities.User
 	)
 
-	// userId := c.Param("id")
-	// if user, err = h.userUsecase.GetDetail(c.Request.Context(), userId); err != nil {
-	// 	c.Set(middlewares.FailureKey, err)
-	// 	return
-	// }
+	userId := c.Param("id")
+	if user, err = h.userUsecase.GetDetail(c.Request.Context(), userId); err != nil {
+		c.Set(middlewares.FailureKey, err)
+		return
+	}
 
 	if res, err = response.NewUserResponse(user); err != nil {
 		c.Set(middlewares.FailureKey, err)
