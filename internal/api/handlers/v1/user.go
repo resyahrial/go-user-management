@@ -12,7 +12,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	var (
 		err  error
 		req  *request.CreateUserRequest
-		res  *response.CreateUserResponse
+		res  *response.UserResponse
 		user *entities.User
 	)
 
@@ -31,7 +31,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	if res, err = response.NewCreateUserResponse(user); err != nil {
+	if res, err = response.NewUserResponse(user); err != nil {
 		c.Set(middlewares.FailureKey, err)
 		return
 	}
@@ -43,7 +43,7 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 	var (
 		err  error
 		req  *request.UpdateUserRequest
-		res  *response.UpdateUserResponse
+		res  *response.UserResponse
 		user *entities.User
 	)
 
@@ -63,7 +63,7 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	if res, err = response.NewUpdateUserResponse(user); err != nil {
+	if res, err = response.NewUserResponse(user); err != nil {
 		c.Set(middlewares.FailureKey, err)
 		return
 	}

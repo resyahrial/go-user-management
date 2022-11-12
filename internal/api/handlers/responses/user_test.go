@@ -5,7 +5,6 @@ import (
 
 	response "github.com/resyahrial/go-user-management/internal/api/handlers/responses"
 	"github.com/resyahrial/go-user-management/internal/entities"
-	"github.com/segmentio/ksuid"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -20,7 +19,7 @@ func TestUserResponse(t *testing.T) {
 func (s *UserResponseTestSuite) SetupTest() {
 }
 
-func (s *UserResponseTestSuite) TestConvertUserEntityToCreateUserResponse() {
+func (s *UserResponseTestSuite) TestConvertUserEntityToUserResponse() {
 	user := &entities.User{
 		Name:     "user",
 		Email:    "user@mail.com",
@@ -29,12 +28,12 @@ func (s *UserResponseTestSuite) TestConvertUserEntityToCreateUserResponse() {
 
 	testCases := []struct {
 		name           string
-		expectedOutput *response.CreateUserResponse
+		expectedOutput *response.UserResponse
 		expectedError  error
 	}{
 		{
 			name: "should create basic user",
-			expectedOutput: &response.CreateUserResponse{
+			expectedOutput: &response.UserResponse{
 				Name:  "user",
 				Email: "user@mail.com",
 			},
@@ -42,39 +41,7 @@ func (s *UserResponseTestSuite) TestConvertUserEntityToCreateUserResponse() {
 	}
 
 	for _, tc := range testCases {
-		res, err := response.NewCreateUserResponse(user)
-		s.Run(tc.name, func() {
-			s.Equal(tc.expectedError, err)
-			s.EqualValues(tc.expectedOutput, res)
-		})
-	}
-}
-
-func (s *UserResponseTestSuite) TestConvertUserEntityToUpdateUserResponse() {
-	user := &entities.User{
-		ID:       ksuid.New().String(),
-		Name:     "user",
-		Email:    "user@mail.com",
-		Password: "anypassword",
-	}
-
-	testCases := []struct {
-		name           string
-		expectedOutput *response.UpdateUserResponse
-		expectedError  error
-	}{
-		{
-			name: "should create basic user",
-			expectedOutput: &response.UpdateUserResponse{
-				ID:    user.ID,
-				Name:  "user",
-				Email: "user@mail.com",
-			},
-		},
-	}
-
-	for _, tc := range testCases {
-		res, err := response.NewCreateUserResponse(user)
+		res, err := response.NewUserResponse(user)
 		s.Run(tc.name, func() {
 			s.Equal(tc.expectedError, err)
 			s.EqualValues(tc.expectedOutput, res)

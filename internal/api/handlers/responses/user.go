@@ -5,26 +5,13 @@ import (
 	"github.com/resyahrial/go-user-management/internal/entities"
 )
 
-type CreateUserResponse struct {
+type UserResponse struct {
 	ID    string `json:"id"`
 	Name  string `json:"name"`
 	Email string `json:"email"`
 }
 
-func NewCreateUserResponse(user *entities.User) (res *CreateUserResponse, err error) {
-	if err = mapstructure.Decode(user, &res); err != nil {
-		return
-	}
-	return
-}
-
-type UpdateUserResponse struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-}
-
-func NewUpdateUserResponse(user *entities.User) (res *UpdateUserResponse, err error) {
+func NewUserResponse(user *entities.User) (res *UserResponse, err error) {
 	if err = mapstructure.Decode(user, &res); err != nil {
 		return
 	}
