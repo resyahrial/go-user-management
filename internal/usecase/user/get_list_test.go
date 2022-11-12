@@ -2,7 +2,6 @@ package usecase_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -34,47 +33,54 @@ func (s *GetUserListUsecaseTestSuite) SetupTest() {
 	)
 }
 
-func (s *GetUserListUsecaseTestSuite) TestGetUserDetail() {
+func (s *GetUserListUsecaseTestSuite) TestGetUserList() {
 	userId := ksuid.New().String()
-	hashedPassword := "hashedPassword"
+	queryParams := &entities.PaginatedQueryParams{
+		Page:  0,
+		Limit: 10,
+	}
 
 	testCases := []struct {
-		name                    string
-		resultMockGetUserDetail *entities.User
-		errorMockGetUserDetail  error
-		expectedOutput          *entities.User
-		expectedError           error
+		name                  string
+		resultMockGetUserList []*entities.User
+		countMockGetUserList  int64
+		errorMockGetUserList  error
+		expectedOutput        []*entities.User
+		expectedCount         int64
+		expectedError         error
 	}{
 		{
-			name: "should get user detail",
-			resultMockGetUserDetail: &entities.User{
-				ID:       userId,
-				Name:     "user",
-				Email:    "user@mail.com",
-				Password: hashedPassword,
+			name: "should get user list",
+			resultMockGetUserList: []*entities.User{
+				{
+					ID:       userId,
+					Name:     "user",
+					Email:    "user@mail.com",
+					Password: "anypassword",
+				},
 			},
-			expectedOutput: &entities.User{
-				ID:       userId,
-				Name:     "user",
-				Email:    "user@mail.com",
-				Password: hashedPassword,
+			countMockGetUserList: 1,
+			expectedOutput: []*entities.User{
+				{
+					ID:       userId,
+					Name:     "user",
+					Email:    "user@mail.com",
+					Password: "anypassword",
+				},
 			},
-		},
-		{
-			name:                   "should return error when failed get user detail",
-			errorMockGetUserDetail: errors.New("user not found"),
-			expectedError:          errors.New("user not found"),
+			expectedCount: 1,
 		},
 	}
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			s.userRepo.EXPECT().GetById(gomock.Any(), userId).Return(tc.resultMockGetUserDetail, tc.errorMockGetUserDetail)
+			s.userRepo.EXPECT().GetList(gomock.Any(), queryParams).Return(tc.resultMockGetUserList, tc.countMockGetUserList, tc.errorMockGetUserList)
 
-			res, err := s.ucase.GetDetail(context.Background(), userId)
+			res, count, err := s.ucase.GetList(context.Background(), queryParams)
 			s.Equal(tc.expectedError, err)
 			if err == nil {
 				s.EqualValues(tc.expectedOutput, res)
+				s.Equal(tc.expectedCount, count)
 			} else {
 				s.Nil(res)
 			}

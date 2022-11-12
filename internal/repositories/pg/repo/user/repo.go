@@ -100,3 +100,19 @@ func (u *UserRepoImpl) GetById(ctx context.Context, id string) (res *entities.Us
 
 	return userModel.ConvertToEntity()
 }
+
+func (u *UserRepoImpl) GetList(ctx context.Context, params *entities.PaginatedQueryParams) (users []*entities.User, count int64, err error) {
+	// var (
+	// 	userModel *models.User
+	// )
+
+	// if err = u.db.WithContext(ctx).Model(&models.User{}).Where("id = ?", id).First(&userModel).Error; err != nil {
+	// 	if err == gorm.ErrRecordNotFound {
+	// 		err = ErrUserNotFound
+	// 	}
+	// 	return
+	// }
+
+	// return userModel.ConvertToEntity()
+	return
+}
