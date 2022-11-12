@@ -54,13 +54,13 @@ func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
 				Password: "anypassword",
 			},
 			resultMockCreateUser: &entities.User{
-				Id:       userId,
+				ID:       userId,
 				Name:     "user",
 				Email:    "user@mail.com",
 				Password: "password",
 			},
 			expectedOutput: &entities.User{
-				Id:       userId,
+				ID:       userId,
 				Name:     "user",
 				Email:    "user@mail.com",
 				Password: "password",

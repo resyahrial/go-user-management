@@ -27,7 +27,7 @@ func TestNewUserModel(t *testing.T) {
 func TestConvertToEntityUser(t *testing.T) {
 	user := &models.User{
 		CommonField: models.CommonField{
-			Id: ksuid.New().String(),
+			ID: ksuid.New().String(),
 		},
 		Name:     "user",
 		Email:    "user@mail.com",
@@ -37,7 +37,7 @@ func TestConvertToEntityUser(t *testing.T) {
 	userEntity, err := user.ConvertToEntity()
 	assert.Nil(t, err)
 	assert.NotNil(t, userEntity)
-	assert.Equal(t, user.Id, userEntity.Id)
+	assert.Equal(t, user.ID, userEntity.ID)
 	assert.EqualValues(t, user.Name, userEntity.Name)
 	assert.EqualValues(t, user.Email, userEntity.Email)
 	assert.EqualValues(t, user.Password, userEntity.Password)

@@ -6,8 +6,9 @@ import (
 )
 
 type CreateUserResponse struct {
-	Name  string
-	Email string
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }
 
 func NewCreateUserResponse(user *entities.User) (res *CreateUserResponse, err error) {

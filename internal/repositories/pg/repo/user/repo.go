@@ -30,7 +30,7 @@ func (u *UserRepoImpl) Create(ctx context.Context, user *entities.User) (res *en
 		return
 	}
 
-	userModel.Id = ksuid.New().String()
+	userModel.ID = ksuid.New().String()
 	if err = u.db.WithContext(ctx).Create(userModel).Error; err != nil {
 		return
 	}

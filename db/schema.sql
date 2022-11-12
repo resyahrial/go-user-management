@@ -33,7 +33,7 @@ CREATE TABLE public.users (
     is_deleted boolean,
     name character varying(100) NOT NULL,
     email character varying(255) NOT NULL,
-    password character varying(50) NOT NULL
+    password character varying(100) NOT NULL
 );
 
 

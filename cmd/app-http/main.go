@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/resyahrial/go-user-management/config"
-	route "github.com/resyahrial/go-user-management/internal/api/routes"
 	"github.com/resyahrial/go-user-management/internal/api/server"
 	"github.com/resyahrial/go-user-management/internal/repositories/pg"
 	"github.com/resyahrial/go-user-management/pkg/graceful"
@@ -40,7 +39,7 @@ func main() {
 
 	_ = pg.InitDatabase(config.GlobalConfig)
 
-	serverEngine := server.InitGinEngine(config.GlobalConfig)
+	serverEngine := server.InitGinEngine(config.GlobalConfig, pg.DbInstance)
 	if serverEngine == nil {
 		log.Fatal("server failed to initialized")
 	}
@@ -48,6 +47,6 @@ func main() {
 	log.Printf("Running http server on port : %v", config.GlobalConfig.App.ServerAppPort)
 	graceful.RunHttpServer(context.Background(), &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.GlobalConfig.App.ServerAppPort),
-		Handler: route.InitRoutes(serverEngine, pg.DbInstance, config.GlobalConfig.Hasher.Cost),
+		Handler: serverEngine,
 	}, 10*time.Second)
 }

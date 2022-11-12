@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	request "github.com/resyahrial/go-user-management/internal/api/handlers/requests"
 	response "github.com/resyahrial/go-user-management/internal/api/handlers/responses"
+	"github.com/resyahrial/go-user-management/internal/api/middlewares"
 	"github.com/resyahrial/go-user-management/internal/entities"
 )
 
@@ -11,27 +12,29 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	var (
 		err  error
 		req  *request.CreateUserRequest
+		res  *response.CreateUserResponse
 		user *entities.User
 	)
 
 	if err = c.BindJSON(&req); err != nil {
-		res := response.HandleError(c, err)
-		c.JSON(res.StatusCode, res)
+		c.Set(middlewares.FailureKey, err)
 		return
 	}
 
 	if user, err = req.CastToUserEntity(); err != nil {
-		res := response.HandleError(c, err)
-		c.JSON(res.StatusCode, res)
+		c.Set(middlewares.FailureKey, err)
 		return
 	}
 
 	if user, err = h.userUsecase.Create(c.Request.Context(), user); err != nil {
-		res := response.HandleError(c, err)
-		c.JSON(res.StatusCode, res)
+		c.Set(middlewares.FailureKey, err)
 		return
 	}
 
-	res := response.HandleSuccess(user)
-	c.JSON(res.StatusCode, res)
+	if res, err = response.NewCreateUserResponse(user); err != nil {
+		c.Set(middlewares.FailureKey, err)
+		return
+	}
+
+	c.Set(middlewares.SuccessKey, res)
 }

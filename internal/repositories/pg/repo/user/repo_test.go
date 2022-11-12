@@ -103,7 +103,7 @@ func (s *UserRepoTestSuite) TestCreateUser() {
 				s.Equal(tc.expectedOutput.Name, res.Name)
 				s.Equal(tc.expectedOutput.Email, res.Email)
 				s.Equal(tc.expectedOutput.Password, res.Password)
-				s.NotEmpty(res.Id)
+				s.NotEmpty(res.ID)
 			} else {
 				s.Nil(res)
 			}
