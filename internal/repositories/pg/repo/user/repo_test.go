@@ -9,7 +9,6 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/resyahrial/go-user-management/internal/entities"
 	repo "github.com/resyahrial/go-user-management/internal/repositories/pg/repo/user"
-	"github.com/resyahrial/go-user-management/pkg/exception"
 	"github.com/segmentio/ksuid"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/postgres"
@@ -155,7 +154,7 @@ func (s *UserRepoTestSuite) TestUpdateUser() {
 				Password: "anypassword",
 			},
 			mockGetDetailUser: gorm.ErrRecordNotFound,
-			expectedError:     exception.NewNotFoundException().SetModule(entities.UserModule).SetMessage("user not found"),
+			expectedError:     repo.ErrUserNotFound,
 		},
 	}
 
@@ -189,6 +188,57 @@ func (s *UserRepoTestSuite) TestUpdateUser() {
 			}
 
 			res, err := s.repo.Update(context.Background(), userId, tc.input)
+			s.Equal(tc.expectedError, err)
+			if err == nil {
+				s.Equal(tc.expectedOutput.Name, res.Name)
+				s.Equal(tc.expectedOutput.Email, res.Email)
+				s.Equal(tc.expectedOutput.Password, res.Password)
+				s.NotEmpty(res.ID)
+			} else {
+				s.Nil(res)
+			}
+		})
+	}
+}
+
+func (s *UserRepoTestSuite) TestGetUserById() {
+	userId := ksuid.New().String()
+
+	testCases := []struct {
+		name                 string
+		input                *entities.User
+		mockGetDetailUser    error
+		mockErrorPersistUser error
+		expectedError        error
+		expectedOutput       *entities.User
+	}{
+		{
+			name: "should get user detail",
+			expectedOutput: &entities.User{
+				ID:       userId,
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: "anypassword",
+			},
+		},
+		{
+			name:              "should return error when user data not found",
+			mockGetDetailUser: gorm.ErrRecordNotFound,
+			expectedError:     repo.ErrUserNotFound,
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			rows := sqlmock.NewRows([]string{"id", "name", "email", "password"})
+			if tc.mockGetDetailUser == nil {
+				rows = rows.AddRow(userId, "user", "user@mail.com", "anypassword")
+			}
+			s.mock.ExpectQuery(`SELECT * FROM "users" WHERE id = $1 ORDER BY "users"."id" LIMIT 1`).
+				WithArgs(userId).
+				WillReturnRows(rows)
+
+			res, err := s.repo.GetById(context.Background(), userId)
 			s.Equal(tc.expectedError, err)
 			if err == nil {
 				s.Equal(tc.expectedOutput.Name, res.Name)

@@ -41,8 +41,8 @@ func (s *UpdateUserUsecaseTestSuite) TestUpdateUser() {
 	testCases := []struct {
 		name                 string
 		input                *entities.User
-		resultMockCreateUser *entities.User
-		errorMockCreateUser  error
+		resultMockUpdateUser *entities.User
+		errorMockUpdateUser  error
 		expectedOutput       *entities.User
 		expectedError        error
 	}{
@@ -53,7 +53,7 @@ func (s *UpdateUserUsecaseTestSuite) TestUpdateUser() {
 				Email:    "user@mail.com",
 				Password: "anypassword",
 			},
-			resultMockCreateUser: &entities.User{
+			resultMockUpdateUser: &entities.User{
 				ID:       userId,
 				Name:     "user",
 				Email:    "user@mail.com",
@@ -73,7 +73,7 @@ func (s *UpdateUserUsecaseTestSuite) TestUpdateUser() {
 				Email:    "user@mail.com",
 				Password: "anypassword",
 			},
-			errorMockCreateUser: errors.New("failed update user"),
+			errorMockUpdateUser: errors.New("failed update user"),
 			expectedError:       errors.New("failed update user"),
 		},
 		{
@@ -82,7 +82,7 @@ func (s *UpdateUserUsecaseTestSuite) TestUpdateUser() {
 				Name:  "user",
 				Email: "user@mail.com",
 			},
-			resultMockCreateUser: &entities.User{
+			resultMockUpdateUser: &entities.User{
 				ID:       userId,
 				Name:     "user",
 				Email:    "user@mail.com",
@@ -108,7 +108,7 @@ func (s *UpdateUserUsecaseTestSuite) TestUpdateUser() {
 				hashedInput.Password = hashedPassword
 			}
 
-			s.userRepo.EXPECT().Update(gomock.Any(), userId, hashedInput).Return(tc.resultMockCreateUser, tc.errorMockCreateUser)
+			s.userRepo.EXPECT().Update(gomock.Any(), userId, hashedInput).Return(tc.resultMockUpdateUser, tc.errorMockUpdateUser)
 
 			res, err := s.ucase.Update(context.Background(), userId, tc.input)
 			s.Equal(tc.expectedError, err)

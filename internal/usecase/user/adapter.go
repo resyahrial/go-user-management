@@ -10,6 +10,7 @@ import (
 type UserRepo interface {
 	Create(ctx context.Context, user *entities.User) (res *entities.User, err error)
 	Update(ctx context.Context, id string, user *entities.User) (res *entities.User, err error)
+	GetById(ctx context.Context, id string) (res *entities.User, err error)
 }
 
 //go:generate mockgen -destination=mocks/mock.go -source=adapter.go Hasher

@@ -18,4 +18,5 @@ type User struct {
 type UserUsecase interface {
 	Create(ctx context.Context, input *User) (user *User, err error)
 	Update(ctx context.Context, id string, input *User) (user *User, err error)
+	GetDetail(ctx context.Context, id string) (user *User, err error)
 }

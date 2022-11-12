@@ -12,6 +12,10 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+var (
+	ErrUserNotFound = exception.NewNotFoundException().SetModule(entities.UserModule).SetMessage("user not found")
+)
+
 type UserRepoImpl struct {
 	db *gorm.DB
 }
@@ -58,7 +62,7 @@ func (u *UserRepoImpl) Update(ctx context.Context, id string, user *entities.Use
 
 	if err = u.db.WithContext(ctx).Model(&models.User{}).Where("id = ?", id).First(&models.User{}).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			err = exception.NewNotFoundException().SetModule(entities.UserModule).SetMessage("user not found")
+			err = ErrUserNotFound
 		}
 		return
 	}
@@ -75,6 +79,21 @@ func (u *UserRepoImpl) Update(ctx context.Context, id string, user *entities.Use
 		}
 		if len(mapError) > 0 {
 			err = exception.NewBadRequestException().SetModule(entities.UserModule).SetCollectionMessage(mapError)
+		}
+		return
+	}
+
+	return userModel.ConvertToEntity()
+}
+
+func (u *UserRepoImpl) GetById(ctx context.Context, id string) (res *entities.User, err error) {
+	var (
+		userModel *models.User
+	)
+
+	if err = u.db.WithContext(ctx).Model(&models.User{}).Where("id = ?", id).First(&userModel).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = ErrUserNotFound
 		}
 		return
 	}
