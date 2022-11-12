@@ -57,11 +57,11 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	// userId := c.Param("id")
-	// if user, err = h.userUsecase.Update(c.Request.Context(), userId, user); err != nil {
-	// 	c.Set(middlewares.FailureKey, err)
-	// 	return
-	// }
+	userId := c.Param("id")
+	if user, err = h.userUsecase.Update(c.Request.Context(), userId, user); err != nil {
+		c.Set(middlewares.FailureKey, err)
+		return
+	}
 
 	if res, err = response.NewUpdateUserResponse(user); err != nil {
 		c.Set(middlewares.FailureKey, err)
