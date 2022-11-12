@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/resyahrial/go-template/pkg/exception"
+	"github.com/resyahrial/go-user-management/pkg/exception"
 )
 
 type Success struct {

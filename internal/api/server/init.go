@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/resyahrial/go-template/config"
-	response "github.com/resyahrial/go-template/internal/api/handlers/responses"
+	"github.com/resyahrial/go-user-management/config"
+	response "github.com/resyahrial/go-user-management/internal/api/handlers/responses"
 )
 
 func InitGinEngine(cfg config.Config) *gin.Engine {

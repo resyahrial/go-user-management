@@ -1,6 +1,6 @@
 package usecase
 
-import "github.com/resyahrial/go-template/internal/entities"
+import "github.com/resyahrial/go-user-management/internal/entities"
 
 type UserUsecaseImpl struct {
 	UserRepo

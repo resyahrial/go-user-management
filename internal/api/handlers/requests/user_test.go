@@ -3,9 +3,9 @@ package request_test
 import (
 	"testing"
 
-	request "github.com/resyahrial/go-template/internal/api/handlers/requests"
-	"github.com/resyahrial/go-template/internal/entities"
-	"github.com/resyahrial/go-template/pkg/exception"
+	request "github.com/resyahrial/go-user-management/internal/api/handlers/requests"
+	"github.com/resyahrial/go-user-management/internal/entities"
+	"github.com/resyahrial/go-user-management/pkg/exception"
 	"github.com/stretchr/testify/suite"
 )
 

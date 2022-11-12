@@ -2,7 +2,7 @@ package response
 
 import (
 	"github.com/mitchellh/mapstructure"
-	"github.com/resyahrial/go-template/internal/entities"
+	"github.com/resyahrial/go-user-management/internal/entities"
 )
 
 type CreateUserResponse struct {

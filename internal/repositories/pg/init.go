@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/resyahrial/go-template/config"
+	"github.com/resyahrial/go-user-management/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormLogger "gorm.io/gorm/logger"

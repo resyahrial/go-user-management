@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/resyahrial/go-template/internal/entities"
-	usecase "github.com/resyahrial/go-template/internal/usecase/user"
-	adapter_mock "github.com/resyahrial/go-template/internal/usecase/user/mocks"
+	"github.com/resyahrial/go-user-management/internal/entities"
+	usecase "github.com/resyahrial/go-user-management/internal/usecase/user"
+	adapter_mock "github.com/resyahrial/go-user-management/internal/usecase/user/mocks"
 	"github.com/segmentio/ksuid"
 	"github.com/stretchr/testify/suite"
 )

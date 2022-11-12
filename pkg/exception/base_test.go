@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/resyahrial/go-template/pkg/exception"
+	"github.com/resyahrial/go-user-management/pkg/exception"
 	"github.com/stretchr/testify/suite"
 )
 

@@ -2,9 +2,9 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	request "github.com/resyahrial/go-template/internal/api/handlers/requests"
-	response "github.com/resyahrial/go-template/internal/api/handlers/responses"
-	"github.com/resyahrial/go-template/internal/entities"
+	request "github.com/resyahrial/go-user-management/internal/api/handlers/requests"
+	response "github.com/resyahrial/go-user-management/internal/api/handlers/responses"
+	"github.com/resyahrial/go-user-management/internal/entities"
 )
 
 func (h *Handler) CreateUser(c *gin.Context) {

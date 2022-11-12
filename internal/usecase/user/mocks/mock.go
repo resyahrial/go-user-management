@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	entities "github.com/resyahrial/go-template/internal/entities"
+	entities "github.com/resyahrial/go-user-management/internal/entities"
 )
 
 // MockUserRepo is a mock of UserRepo interface.

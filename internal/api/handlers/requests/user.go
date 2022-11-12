@@ -2,9 +2,9 @@ package request
 
 import (
 	"github.com/mitchellh/mapstructure"
-	"github.com/resyahrial/go-template/internal/entities"
-	"github.com/resyahrial/go-template/pkg/exception"
-	"github.com/resyahrial/go-template/pkg/validator"
+	"github.com/resyahrial/go-user-management/internal/entities"
+	"github.com/resyahrial/go-user-management/pkg/exception"
+	"github.com/resyahrial/go-user-management/pkg/validator"
 )
 
 type CreateUserRequest struct {
