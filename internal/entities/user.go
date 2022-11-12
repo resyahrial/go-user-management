@@ -9,12 +9,16 @@ const (
 )
 
 type User struct {
-	Id       string
+	ID       string
 	Name     string
 	Email    string
 	Password string
 }
 
 type UserUsecase interface {
-	CreateUser(ctx context.Context, input *User) (user *User, err error)
+	Create(ctx context.Context, input *User) (user *User, err error)
+	Update(ctx context.Context, id string, input *User) (user *User, err error)
+	GetDetail(ctx context.Context, id string) (user *User, err error)
+	GetList(ctx context.Context, params *PaginatedQueryParams) (users []*User, count int64, err error)
+	Delete(ctx context.Context, id string) (err error)
 }

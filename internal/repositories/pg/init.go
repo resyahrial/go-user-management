@@ -1,6 +1,7 @@
 package pg
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -28,13 +29,14 @@ func InitDatabase(cfg config.Config) *gorm.DB {
 		},
 	})
 	if err != nil {
-		log.Printf("failed to establish database connection. error: %s\n", err)
+		log.Fatalf("failed to establish database connection. error: %s\n", err)
 		os.Exit(1)
 	}
 
 	sqlDB, err := DbInstance.DB()
 	if err != nil {
-		log.Println("failed to initiate database object")
+		fmt.Println(err)
+		log.Fatalf("failed to initiate database object. error: %s\n", err)
 		os.Exit(1)
 	}
 

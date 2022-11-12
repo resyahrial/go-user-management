@@ -6,10 +6,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/resyahrial/go-user-management/config"
-	response "github.com/resyahrial/go-user-management/internal/api/handlers/responses"
+	"github.com/resyahrial/go-user-management/internal/api/middlewares"
+	route "github.com/resyahrial/go-user-management/internal/api/routes"
+	"gorm.io/gorm"
 )
 
-func InitGinEngine(cfg config.Config) *gin.Engine {
+func InitGinEngine(cfg config.Config, db *gorm.DB) *gin.Engine {
 	var (
 		ginMode string
 	)
@@ -22,24 +24,19 @@ func InitGinEngine(cfg config.Config) *gin.Engine {
 	}
 
 	gin.SetMode(ginMode)
-	r := gin.Default()
+	r := gin.New()
 
-	// r.Use(middleware.RequestID())
-	// r.Use(middleware.BeforeAfterRequest())
-	// otel.SetTracerProvider(tp)
-	// r.Use(otelgin.Middleware(appConfig.Name, otelgin.WithTracerProvider(tp)))
+	customMiddleware := middlewares.NewMiddleware()
+
+	r.Use(customMiddleware.ResponseWrapper())
 
 	r.Use(gin.CustomRecovery((func(c *gin.Context, recovered interface{}) {
-		err := fmt.Errorf("panic : %v", recovered)
-		res := response.HandleError(c, err)
-		c.AbortWithStatusJSON(res.StatusCode, res)
+		c.Set(middlewares.FailureKey, fmt.Errorf("panic : %v", recovered))
 	})))
 
 	r.NoRoute(func(c *gin.Context) {
-		err := errors.New("route not found")
-		res := response.HandleError(c, err)
-		c.JSON(res.StatusCode, res)
+		c.Set(middlewares.FailureKey, errors.New("route not found"))
 	})
 
-	return r
+	return route.InitRoutes(r, db, cfg.Hasher.Cost)
 }

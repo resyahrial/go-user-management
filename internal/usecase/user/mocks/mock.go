@@ -50,6 +50,66 @@ func (mr *MockUserRepoMockRecorder) Create(ctx, user interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepo)(nil).Create), ctx, user)
 }
 
+// Delete mocks base method.
+func (m *MockUserRepo) Delete(ctx context.Context, id string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockUserRepoMockRecorder) Delete(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockUserRepo)(nil).Delete), ctx, id)
+}
+
+// GetById mocks base method.
+func (m *MockUserRepo) GetById(ctx context.Context, id string) (*entities.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetById", ctx, id)
+	ret0, _ := ret[0].(*entities.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetById indicates an expected call of GetById.
+func (mr *MockUserRepoMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockUserRepo)(nil).GetById), ctx, id)
+}
+
+// GetList mocks base method.
+func (m *MockUserRepo) GetList(ctx context.Context, params *entities.PaginatedQueryParams) ([]*entities.User, int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetList", ctx, params)
+	ret0, _ := ret[0].([]*entities.User)
+	ret1, _ := ret[1].(int64)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetList indicates an expected call of GetList.
+func (mr *MockUserRepoMockRecorder) GetList(ctx, params interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetList", reflect.TypeOf((*MockUserRepo)(nil).GetList), ctx, params)
+}
+
+// Update mocks base method.
+func (m *MockUserRepo) Update(ctx context.Context, id string, user *entities.User) (*entities.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, id, user)
+	ret0, _ := ret[0].(*entities.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockUserRepoMockRecorder) Update(ctx, id, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockUserRepo)(nil).Update), ctx, id, user)
+}
+
 // MockHasher is a mock of Hasher interface.
 type MockHasher struct {
 	ctrl     *gomock.Controller

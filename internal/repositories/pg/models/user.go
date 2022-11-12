@@ -23,6 +23,6 @@ func (u *User) ConvertToEntity() (userEntity *entities.User, err error) {
 	if err = mapstructure.Decode(u, &userEntity); err != nil {
 		return
 	}
-	userEntity.Id = u.Id
+	userEntity.ID = u.ID
 	return
 }
