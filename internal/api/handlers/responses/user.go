@@ -19,7 +19,7 @@ func NewUserResponse(user *entities.User) (res *UserResponse, err error) {
 }
 
 func NewListUserResponse(users []*entities.User) (res []*UserResponse, err error) {
-	res = make([]*UserResponse, len(users))
+	res = make([]*UserResponse, 0)
 	for _, user := range users {
 		var userRes *UserResponse
 		if userRes, err = NewUserResponse(user); err != nil {

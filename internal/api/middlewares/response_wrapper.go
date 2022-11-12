@@ -10,7 +10,7 @@ import (
 const (
 	SuccessKey   = "SuccessKey"
 	FailureKey   = "FailureKey"
-	PaginatedKey = "CountKey"
+	PaginatedKey = "PaginatedKey"
 )
 
 type PaginatedResultValue struct {
@@ -22,12 +22,12 @@ type PaginatedResultValue struct {
 type success struct {
 	StatusCode int         `json:"-"`
 	Data       interface{} `json:"data"`
-	PageInfo   pageInfo    `json:"page_info,omitempty"`
+	PageInfo   interface{} `json:"page_info,omitempty"`
 }
 
 type pageInfo struct {
-	CurrentPage int `json:"current_page"`
-	TotalPage   int `json:"total_page"`
+	CurrentPage int `json:"current_page,omitempty"`
+	TotalPage   int `json:"total_page,omitempty"`
 }
 
 type failure struct {
@@ -47,9 +47,9 @@ func (m *Middleware) ResponseWrapper() gin.HandlerFunc {
 		}
 
 		if data, ok := c.Get(SuccessKey); ok {
-			if count, ok := c.Get(PaginatedKey); ok {
-				if paginatedResultValue, ok := count.(PaginatedResultValue); ok {
-					handleSuccessPaginated(c, data, paginatedResultValue)
+			if paginatedData, ok := c.Get(PaginatedKey); ok {
+				if parsedPaginatedData, ok := paginatedData.(PaginatedResultValue); ok {
+					handleSuccessPaginated(c, data, parsedPaginatedData)
 				}
 			} else {
 				handleSuccess(c, data)
