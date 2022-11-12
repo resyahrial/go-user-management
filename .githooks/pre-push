@@ -16,16 +16,16 @@ printf "."
 sleep 1
 printf ".\n"
 
-printf "===========\n"
-printf "Building..\n"
-go build -o temp-main main.go 
-if [ $? -ne 0 ]; then
-  printf "\nBuild FAILED\n"
-  printf "Push FAILED\n\n"
-  exit 1
-fi
-rm temp-main
-printf "Build OK\n"
+# printf "===========\n"
+# printf "Building..\n"
+# go build -o temp-main main.go 
+# if [ $? -ne 0 ]; then
+#   printf "\nBuild FAILED\n"
+#   printf "Push FAILED\n\n"
+#   exit 1
+# fi
+# rm temp-main
+# printf "Build OK\n"
 
 printf "===========\n"
 printf "Testing..\n"
@@ -36,18 +36,6 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 printf "Test OK\n"
-
-printf "===========\n"
-printf "Highly recommended to run 'make lint' \n"
-printf "by yourself after pushing is finished.\n"
-sleep 2
-#comment it out for now, taking too long
-#make lint
-#if [ $? -ne 0 ]; then
-  #printf "\nLinting FAILED\n"
-  #printf "Linting FAILED\n\n"
-  #exit 1
-#fi
 
 printf "===========\n"
 printf "Pushing..\n"
