@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	request "github.com/resyahrial/go-user-management/internal/api/handlers/requests"
 	response "github.com/resyahrial/go-user-management/internal/api/handlers/responses"
@@ -98,7 +96,7 @@ func (h *Handler) GetList(c *gin.Context) {
 	var (
 		err           error
 		queryParamReq *request.PaginatedQueryParams
-		queryParam    *entities.PaginatedQueryParams
+		queryParams   *entities.PaginatedQueryParams
 		users         []*entities.User
 		count         int64
 		res           []*response.UserResponse
@@ -109,16 +107,15 @@ func (h *Handler) GetList(c *gin.Context) {
 		return
 	}
 
-	if queryParam, err = queryParamReq.CastToPaginatedQueryParamsEntity(); err != nil {
+	if queryParams, err = queryParamReq.CastToPaginatedQueryParamsEntity(); err != nil {
 		c.Set(middlewares.FailureKey, err)
 		return
 	}
-	fmt.Println(queryParam)
 
-	// if users, count, err = h.userUsecase.GetList(c.Request.Context(), queryParam); err != nil {
-	// 	c.Set(middlewares.FailureKey, err)
-	// 	return
-	// }
+	if users, count, err = h.userUsecase.GetList(c.Request.Context(), queryParams); err != nil {
+		c.Set(middlewares.FailureKey, err)
+		return
+	}
 
 	if res, err = response.NewListUserResponse(users); err != nil {
 		c.Set(middlewares.FailureKey, err)
@@ -127,8 +124,8 @@ func (h *Handler) GetList(c *gin.Context) {
 
 	c.Set(middlewares.SuccessKey, res)
 	c.Set(middlewares.PaginatedKey, middlewares.PaginatedResultValue{
-		Page:  queryParam.Page,
-		Limit: queryParam.Limit,
+		Page:  queryParams.Page,
+		Limit: queryParams.Limit,
 		Count: count,
 	})
 }
