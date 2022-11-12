@@ -36,14 +36,11 @@ func (s *CreateUserUsecaseTestSuite) SetupTest() {
 
 func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
 	userId := ksuid.New().String()
-	input := &entities.User{
-		Name:     "user",
-		Email:    "user@mail.com",
-		Password: "anypassword",
-	}
+	hashedPassword := "hashedPassword"
 
 	testCases := []struct {
 		name                 string
+		input                *entities.User
 		resultMockCreateUser *entities.User
 		errorMockCreateUser  error
 		expectedOutput       *entities.User
@@ -51,6 +48,11 @@ func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
 	}{
 		{
 			name: "should create user",
+			input: &entities.User{
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: "anypassword",
+			},
 			resultMockCreateUser: &entities.User{
 				Id:       userId,
 				Name:     "user",
@@ -65,7 +67,12 @@ func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
 			},
 		},
 		{
-			name:                "should raise error when failed persist user",
+			name: "should raise error when failed persist user",
+			input: &entities.User{
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: "anypassword",
+			},
 			errorMockCreateUser: errors.New("failed persist user"),
 			expectedError:       errors.New("failed persist user"),
 		},
@@ -73,9 +80,17 @@ func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			s.userRepo.EXPECT().Create(gomock.Any(), input).Return(tc.resultMockCreateUser, tc.errorMockCreateUser)
+			s.hasher.EXPECT().HashPassword(tc.input.Password).Return(hashedPassword, nil)
 
-			res, err := s.ucase.CreateUser(context.Background(), input)
+			hashedInput := &entities.User{
+				Name:     tc.input.Name,
+				Email:    tc.input.Email,
+				Password: hashedPassword,
+			}
+
+			s.userRepo.EXPECT().Create(gomock.Any(), hashedInput).Return(tc.resultMockCreateUser, tc.errorMockCreateUser)
+
+			res, err := s.ucase.CreateUser(context.Background(), tc.input)
 			s.Equal(tc.expectedError, err)
 			if err == nil {
 				s.EqualValues(tc.expectedOutput, res)
