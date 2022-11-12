@@ -16,5 +16,5 @@ type User struct {
 }
 
 type UserUsecase interface {
-	CreateUser(ctx context.Context, input *User) (user *User, err error)
+	Create(ctx context.Context, input *User) (user *User, err error)
 }

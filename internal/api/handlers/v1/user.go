@@ -26,7 +26,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	if user, err = h.userUsecase.CreateUser(c.Request.Context(), user); err != nil {
+	if user, err = h.userUsecase.Create(c.Request.Context(), user); err != nil {
 		res := response.HandleError(c, err)
 		c.JSON(res.StatusCode, res)
 		return

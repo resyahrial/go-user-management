@@ -90,7 +90,7 @@ func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
 
 			s.userRepo.EXPECT().Create(gomock.Any(), hashedInput).Return(tc.resultMockCreateUser, tc.errorMockCreateUser)
 
-			res, err := s.ucase.CreateUser(context.Background(), tc.input)
+			res, err := s.ucase.Create(context.Background(), tc.input)
 			s.Equal(tc.expectedError, err)
 			if err == nil {
 				s.EqualValues(tc.expectedOutput, res)
