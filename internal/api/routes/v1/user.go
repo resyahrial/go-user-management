@@ -9,5 +9,5 @@ func CreateUserRoute(router *gin.RouterGroup) {
 }
 
 func UpdateUserRoute(router *gin.RouterGroup) {
-	router.POST("/:id", func(c *gin.Context) { Handler.UpdateUser(c) })
+	router.PUT("/:id", func(c *gin.Context) { Handler.UpdateUser(c) })
 }

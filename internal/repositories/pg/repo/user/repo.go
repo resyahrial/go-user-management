@@ -9,6 +9,7 @@ import (
 	"github.com/resyahrial/go-user-management/pkg/exception"
 	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type UserRepoImpl struct {
@@ -55,12 +56,18 @@ func (u *UserRepoImpl) Update(ctx context.Context, id string, user *entities.Use
 	)
 	mapError := make(map[string][]string)
 
+	if err = u.db.WithContext(ctx).Model(&models.User{}).Where("id = ?", id).First(&models.User{}).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = exception.NewNotFoundException().SetModule(entities.UserModule).SetMessage("user not found")
+		}
+		return
+	}
+
 	if userModel, err = models.NewUserModel(user); err != nil {
 		return
 	}
 
-	userModel.ID = id
-	if err = u.db.WithContext(ctx).Model(user).Updates(&userModel).Error; err != nil {
+	if err = u.db.WithContext(ctx).Model(&userModel).Clauses(clause.Returning{}).Where("id = ?", id).Updates(userModel).Error; err != nil {
 		if strings.Contains(err.Error(), `duplicate key value violates unique constraint "users_email_key"`) {
 			mapError["email"] = []string{
 				"Email must be unique",

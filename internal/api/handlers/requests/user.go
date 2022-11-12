@@ -26,8 +26,8 @@ func (r *CreateUserRequest) CastToUserEntity() (user *entities.User, err error) 
 
 type UpdateUserRequest struct {
 	Name     string `json:"name"`
-	Email    string `json:"email" validate:"email"`
-	Password string `json:"password" validate:"alphanum,min=8"`
+	Email    string `json:"email" validate:"omitempty,email"`
+	Password string `json:"password" validate:"omitempty,alphanum,min=8"`
 }
 
 func (r *UpdateUserRequest) CastToUserEntity() (user *entities.User, err error) {
