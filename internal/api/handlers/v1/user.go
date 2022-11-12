@@ -129,3 +129,19 @@ func (h *Handler) GetList(c *gin.Context) {
 		Count: count,
 	})
 }
+
+func (h *Handler) DeleteUser(c *gin.Context) {
+	var (
+	// err error
+	)
+
+	// userId := c.Param("id")
+	// if user, err = h.userUsecase.Delete(c.Request.Context(), userId); err != nil {
+	// 	c.Set(middlewares.FailureKey, err)
+	// 	return
+	// }
+
+	c.Set(middlewares.SuccessKey, map[string]interface{}{
+		"message": "OK",
+	})
+}
