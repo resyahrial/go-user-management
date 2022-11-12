@@ -13,18 +13,18 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type CreateUserUsecaseTestSuite struct {
+type UpdateUserUsecaseTestSuite struct {
 	suite.Suite
 	userRepo *adapter_mock.MockUserRepo
 	hasher   *adapter_mock.MockHasher
 	ucase    entities.UserUsecase
 }
 
-func TestCreateUserUsecase(t *testing.T) {
-	suite.Run(t, new(CreateUserUsecaseTestSuite))
+func TestUpdateUserUsecase(t *testing.T) {
+	suite.Run(t, new(UpdateUserUsecaseTestSuite))
 }
 
-func (s *CreateUserUsecaseTestSuite) SetupTest() {
+func (s *UpdateUserUsecaseTestSuite) SetupTest() {
 	ctrl := gomock.NewController(s.T())
 	s.userRepo = adapter_mock.NewMockUserRepo(ctrl)
 	s.hasher = adapter_mock.NewMockHasher(ctrl)
@@ -34,7 +34,7 @@ func (s *CreateUserUsecaseTestSuite) SetupTest() {
 	)
 }
 
-func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
+func (s *UpdateUserUsecaseTestSuite) TestUpdateUser() {
 	userId := ksuid.New().String()
 	hashedPassword := "hashedPassword"
 
@@ -47,7 +47,7 @@ func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
 		expectedError        error
 	}{
 		{
-			name: "should create user",
+			name: "should update user",
 			input: &entities.User{
 				Name:     "user",
 				Email:    "user@mail.com",
@@ -67,30 +67,50 @@ func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
 			},
 		},
 		{
-			name: "should raise error when failed persist user",
+			name: "should raise error when failed update user",
 			input: &entities.User{
 				Name:     "user",
 				Email:    "user@mail.com",
 				Password: "anypassword",
 			},
-			errorMockCreateUser: errors.New("failed persist user"),
-			expectedError:       errors.New("failed persist user"),
+			errorMockCreateUser: errors.New("failed update user"),
+			expectedError:       errors.New("failed update user"),
+		},
+		{
+			name: "should not update user's password if not passed by user",
+			input: &entities.User{
+				Name:  "user",
+				Email: "user@mail.com",
+			},
+			resultMockCreateUser: &entities.User{
+				ID:       userId,
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: hashedPassword,
+			},
+			expectedOutput: &entities.User{
+				ID:       userId,
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: hashedPassword,
+			},
 		},
 	}
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			s.hasher.EXPECT().HashPassword(tc.input.Password).Return(hashedPassword, nil)
-
 			hashedInput := &entities.User{
-				Name:     tc.input.Name,
-				Email:    tc.input.Email,
-				Password: hashedPassword,
+				Name:  tc.input.Name,
+				Email: tc.input.Email,
+			}
+			if tc.input.Password != "" {
+				s.hasher.EXPECT().HashPassword(tc.input.Password).Return(hashedPassword, nil)
+				hashedInput.Password = hashedPassword
 			}
 
-			s.userRepo.EXPECT().Create(gomock.Any(), hashedInput).Return(tc.resultMockCreateUser, tc.errorMockCreateUser)
+			s.userRepo.EXPECT().Update(gomock.Any(), userId, hashedInput).Return(tc.resultMockCreateUser, tc.errorMockCreateUser)
 
-			res, err := s.ucase.Create(context.Background(), tc.input)
+			res, err := s.ucase.Update(context.Background(), userId, tc.input)
 			s.Equal(tc.expectedError, err)
 			if err == nil {
 				s.EqualValues(tc.expectedOutput, res)
