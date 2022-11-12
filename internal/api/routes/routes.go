@@ -7,8 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
-	v1_routes.Handler = v1_handlers.NewHandler(db)
+func InitRoutes(r *gin.Engine, db *gorm.DB, hashCost int) *gin.Engine {
+	v1_routes.Handler = v1_handlers.NewHandler(db, hashCost)
 	v1Path := r.Group("/api/v1")
 	{
 		v1_routes.HealthCheckRoute(v1Path)

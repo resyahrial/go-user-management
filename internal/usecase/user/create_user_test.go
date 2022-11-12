@@ -16,6 +16,7 @@ import (
 type CreateUserUsecaseTestSuite struct {
 	suite.Suite
 	userRepo *adapter_mock.MockUserRepo
+	hasher   *adapter_mock.MockHasher
 	ucase    entities.UserUsecase
 }
 
@@ -26,8 +27,10 @@ func TestCreateUserUsecase(t *testing.T) {
 func (s *CreateUserUsecaseTestSuite) SetupTest() {
 	ctrl := gomock.NewController(s.T())
 	s.userRepo = adapter_mock.NewMockUserRepo(ctrl)
+	s.hasher = adapter_mock.NewMockHasher(ctrl)
 	s.ucase = usecase.NewUserUsecase(
 		s.userRepo,
+		s.hasher,
 	)
 }
 

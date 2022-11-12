@@ -48,6 +48,6 @@ func main() {
 	log.Printf("Running http server on port : %v", config.GlobalConfig.App.ServerAppPort)
 	graceful.RunHttpServer(context.Background(), &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.GlobalConfig.App.ServerAppPort),
-		Handler: route.InitRoutes(serverEngine, pg.DbInstance),
+		Handler: route.InitRoutes(serverEngine, pg.DbInstance, config.GlobalConfig.Hasher.Cost),
 	}, 10*time.Second)
 }

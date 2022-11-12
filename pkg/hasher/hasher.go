@@ -6,7 +6,7 @@ type Hasher struct {
 	hashCost int
 }
 
-func NewHasher(hashCost int) *Hasher {
+func New(hashCost int) *Hasher {
 	return &Hasher{hashCost}
 }
 

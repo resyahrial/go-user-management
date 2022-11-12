@@ -10,8 +10,8 @@ type Handler struct {
 	userUsecase entities.UserUsecase
 }
 
-func NewHandler(db *gorm.DB) *Handler {
+func NewHandler(db *gorm.DB, hashCost int) *Handler {
 	return &Handler{
-		userUsecase: factory.InitUserUsecase(db),
+		userUsecase: factory.InitUserUsecase(db, hashCost),
 	}
 }

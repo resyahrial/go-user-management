@@ -17,7 +17,7 @@ func TestHasher(t *testing.T) {
 }
 
 func (s *HasherTestSuite) SetupTest() {
-	s.h = hasher.NewHasher(14)
+	s.h = hasher.New(14)
 }
 
 func (s *HasherTestSuite) TestHashPassword() {
