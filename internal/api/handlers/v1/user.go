@@ -70,3 +70,24 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 
 	c.Set(middlewares.SuccessKey, res)
 }
+
+func (h *Handler) GetDetail(c *gin.Context) {
+	var (
+		err  error
+		res  *response.UserResponse
+		user *entities.User
+	)
+
+	// userId := c.Param("id")
+	// if user, err = h.userUsecase.GetDetail(c.Request.Context(), userId); err != nil {
+	// 	c.Set(middlewares.FailureKey, err)
+	// 	return
+	// }
+
+	if res, err = response.NewUserResponse(user); err != nil {
+		c.Set(middlewares.FailureKey, err)
+		return
+	}
+
+	c.Set(middlewares.SuccessKey, res)
+}

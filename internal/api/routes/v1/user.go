@@ -11,3 +11,7 @@ func CreateUserRoute(router *gin.RouterGroup) {
 func UpdateUserRoute(router *gin.RouterGroup) {
 	router.PUT("/:id", func(c *gin.Context) { Handler.UpdateUser(c) })
 }
+
+func GetUserDetailRoute(router *gin.RouterGroup) {
+	router.GET("/:id", func(c *gin.Context) { Handler.GetDetail(c) })
+}

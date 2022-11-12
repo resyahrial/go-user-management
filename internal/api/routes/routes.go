@@ -18,6 +18,7 @@ func InitRoutes(r *gin.Engine, db *gorm.DB, hashCost int) *gin.Engine {
 	{
 		v1_routes.CreateUserRoute(userPath)
 		v1_routes.UpdateUserRoute(userPath)
+		v1_routes.GetUserDetailRoute(userPath)
 	}
 
 	return r
