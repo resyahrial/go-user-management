@@ -9,6 +9,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/resyahrial/go-user-management/internal/entities"
+	"github.com/resyahrial/go-user-management/internal/repositories/pg/repo/testhelper"
 	repo "github.com/resyahrial/go-user-management/internal/repositories/pg/repo/user"
 	"github.com/segmentio/ksuid"
 	"github.com/stretchr/testify/suite"
@@ -43,7 +44,7 @@ func (s *UserRepoTestSuite) SetupTest() {
 		PreferSimpleProtocol: true,
 	})
 
-	s.db, err = gorm.Open(dialector)
+	s.db, err = gorm.Open(dialector, &testhelper.DisableLog{})
 	s.Nil(err)
 
 	s.repo = repo.NewUserRepo(s.db)
@@ -165,7 +166,7 @@ func (s *UserRepoTestSuite) TestUpdateUser() {
 			if tc.mockGetDetailUser == nil {
 				rows = rows.AddRow(userId)
 			}
-			s.mock.ExpectQuery(`SELECT * FROM "users" WHERE id = $1 ORDER BY "users"."id" LIMIT 1`).
+			s.mock.ExpectQuery(`SELECT * FROM "users" WHERE id = $1 AND is_deleted != true ORDER BY "users"."id" LIMIT 1`).
 				WithArgs(userId).
 				WillReturnRows(rows)
 
@@ -235,7 +236,7 @@ func (s *UserRepoTestSuite) TestGetUserById() {
 			if tc.mockGetDetailUser == nil {
 				rows = rows.AddRow(userId, "user", "user@mail.com", "anypassword")
 			}
-			s.mock.ExpectQuery(`SELECT * FROM "users" WHERE id = $1 ORDER BY "users"."id" LIMIT 1`).
+			s.mock.ExpectQuery(`SELECT * FROM "users" WHERE id = $1 AND is_deleted != true ORDER BY "users"."id" LIMIT 1`).
 				WithArgs(userId).
 				WillReturnRows(rows)
 
@@ -299,9 +300,9 @@ func (s *UserRepoTestSuite) TestGetUserList() {
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			s.mock.ExpectQuery(`SELECT count(*) FROM "users"`).WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(int64(1)))
+			s.mock.ExpectQuery(`SELECT count(*) FROM "users" WHERE is_deleted != true`).WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(int64(1)))
 
-			query := fmt.Sprintf(`SELECT * FROM "users" LIMIT %v`, tc.input.Limit)
+			query := fmt.Sprintf(`SELECT * FROM "users" WHERE is_deleted != true LIMIT %v`, tc.input.Limit)
 			if tc.input.Page > 0 {
 				query = fmt.Sprintf(`%s OFFSET %v`, query, tc.input.Limit*tc.input.Page)
 			}

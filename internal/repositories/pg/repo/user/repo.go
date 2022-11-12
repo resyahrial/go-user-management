@@ -60,7 +60,7 @@ func (u *UserRepoImpl) Update(ctx context.Context, id string, user *entities.Use
 	)
 	mapError := make(map[string][]string)
 
-	if err = u.db.WithContext(ctx).Model(&models.User{}).Where("id = ?", id).First(&models.User{}).Error; err != nil {
+	if err = u.db.WithContext(ctx).Model(&models.User{}).Where("id = ? AND is_deleted != true", id).First(&models.User{}).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = ErrUserNotFound
 		}
@@ -91,7 +91,7 @@ func (u *UserRepoImpl) GetById(ctx context.Context, id string) (res *entities.Us
 		userModel *models.User
 	)
 
-	if err = u.db.WithContext(ctx).Model(&models.User{}).Where("id = ?", id).First(&userModel).Error; err != nil {
+	if err = u.db.WithContext(ctx).Model(&models.User{}).Where("id = ? AND is_deleted != true", id).First(&userModel).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			err = ErrUserNotFound
 		}
@@ -106,7 +106,7 @@ func (u *UserRepoImpl) GetList(ctx context.Context, params *entities.PaginatedQu
 		userModels []models.User
 	)
 
-	result := u.db.WithContext(ctx)
+	result := u.db.WithContext(ctx).Where("is_deleted != true")
 	if err = result.Model(&models.User{}).Count(&count).Error; err != nil {
 		return
 	}
