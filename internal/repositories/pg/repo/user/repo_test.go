@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -245,6 +246,75 @@ func (s *UserRepoTestSuite) TestGetUserById() {
 				s.Equal(tc.expectedOutput.Email, res.Email)
 				s.Equal(tc.expectedOutput.Password, res.Password)
 				s.NotEmpty(res.ID)
+			} else {
+				s.Nil(res)
+			}
+		})
+	}
+}
+
+func (s *UserRepoTestSuite) TestGetUserList() {
+	userId := ksuid.New().String()
+
+	testCases := []struct {
+		name           string
+		input          *entities.PaginatedQueryParams
+		expectedError  error
+		expectedOutput []*entities.User
+		expectedCount  int64
+	}{
+		{
+			name: "should get user list",
+			input: &entities.PaginatedQueryParams{
+				Page:  0,
+				Limit: 10,
+			},
+			expectedOutput: []*entities.User{
+				{
+					ID:       userId,
+					Name:     "user",
+					Email:    "user@mail.com",
+					Password: "anypassword",
+				},
+			},
+			expectedCount: 1,
+		},
+		{
+			name: "should get user list, on next page",
+			input: &entities.PaginatedQueryParams{
+				Page:  1,
+				Limit: 10,
+			},
+			expectedOutput: []*entities.User{
+				{
+					ID:       userId,
+					Name:     "user",
+					Email:    "user@mail.com",
+					Password: "anypassword",
+				},
+			},
+			expectedCount: 1,
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			s.mock.ExpectQuery(`SELECT count(*) FROM "users"`).WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(int64(1)))
+
+			query := fmt.Sprintf(`SELECT * FROM "users" LIMIT %v`, tc.input.Limit)
+			if tc.input.Page > 0 {
+				query = fmt.Sprintf(`%s OFFSET %v`, query, tc.input.Limit*tc.input.Page)
+			}
+
+			s.mock.ExpectQuery(query).WillReturnRows(
+				sqlmock.NewRows([]string{"id", "name", "email", "password"}).AddRow(userId, "user", "user@mail.com", "anypassword"),
+			)
+
+			res, count, err := s.repo.GetList(context.Background(), tc.input)
+			s.Equal(tc.expectedError, err)
+			if err == nil {
+				s.EqualValues(tc.expectedOutput, res)
+				s.Equal(tc.expectedCount, count)
 			} else {
 				s.Nil(res)
 			}

@@ -102,17 +102,28 @@ func (u *UserRepoImpl) GetById(ctx context.Context, id string) (res *entities.Us
 }
 
 func (u *UserRepoImpl) GetList(ctx context.Context, params *entities.PaginatedQueryParams) (users []*entities.User, count int64, err error) {
-	// var (
-	// 	userModel *models.User
-	// )
+	var (
+		userModels []models.User
+	)
 
-	// if err = u.db.WithContext(ctx).Model(&models.User{}).Where("id = ?", id).First(&userModel).Error; err != nil {
-	// 	if err == gorm.ErrRecordNotFound {
-	// 		err = ErrUserNotFound
-	// 	}
-	// 	return
-	// }
+	result := u.db.WithContext(ctx)
+	if err = result.Model(&models.User{}).Count(&count).Error; err != nil {
+		return
+	}
 
-	// return userModel.ConvertToEntity()
+	if err = result.Limit(params.Limit).Offset(params.Limit * params.Page).Find(&userModels).Error; err != nil {
+		return
+	}
+
+	users = make([]*entities.User, 0)
+	for _, userModel := range userModels {
+		if user, errConvert := userModel.ConvertToEntity(); errConvert != nil {
+			err = errConvert
+			return nil, 0, err
+		} else {
+			users = append(users, user)
+		}
+	}
+
 	return
 }
