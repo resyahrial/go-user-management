@@ -17,3 +17,16 @@ func NewCreateUserResponse(user *entities.User) (res *CreateUserResponse, err er
 	}
 	return
 }
+
+type UpdateUserResponse struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
+func NewUpdateUserResponse(user *entities.User) (res *UpdateUserResponse, err error) {
+	if err = mapstructure.Decode(user, &res); err != nil {
+		return
+	}
+	return
+}
