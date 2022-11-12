@@ -9,6 +9,8 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/resyahrial/go-user-management/internal/entities"
 	repo "github.com/resyahrial/go-user-management/internal/repositories/pg/repo/user"
+	"github.com/resyahrial/go-user-management/pkg/exception"
+	"github.com/segmentio/ksuid"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -98,6 +100,95 @@ func (s *UserRepoTestSuite) TestCreateUser() {
 			}
 
 			res, err := s.repo.Create(context.Background(), tc.input)
+			s.Equal(tc.expectedError, err)
+			if err == nil {
+				s.Equal(tc.expectedOutput.Name, res.Name)
+				s.Equal(tc.expectedOutput.Email, res.Email)
+				s.Equal(tc.expectedOutput.Password, res.Password)
+				s.NotEmpty(res.ID)
+			} else {
+				s.Nil(res)
+			}
+		})
+	}
+}
+
+func (s *UserRepoTestSuite) TestUpdateUser() {
+	userId := ksuid.New().String()
+
+	testCases := []struct {
+		name                 string
+		input                *entities.User
+		mockGetDetailUser    error
+		mockErrorPersistUser error
+		expectedError        error
+		expectedOutput       *entities.User
+	}{
+		{
+			name: "should update user",
+			input: &entities.User{
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: "anypassword",
+			},
+			expectedOutput: &entities.User{
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: "anypassword",
+			},
+		},
+		{
+			name: "should not update user when occur error when update user",
+			input: &entities.User{
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: "anypassword",
+			},
+			mockErrorPersistUser: errors.New("failed to update user"),
+			expectedError:        errors.New("failed to update user"),
+		},
+		{
+			name: "should not update user when user data not found",
+			input: &entities.User{
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: "anypassword",
+			},
+			mockGetDetailUser: gorm.ErrRecordNotFound,
+			expectedError:     exception.NewNotFoundException().SetModule(entities.UserModule).SetMessage("user not found"),
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			rows := sqlmock.NewRows([]string{"id"})
+			if tc.mockGetDetailUser == nil {
+				rows = rows.AddRow(userId)
+			}
+			s.mock.ExpectQuery(`SELECT * FROM "users" WHERE id = $1 ORDER BY "users"."id" LIMIT 1`).
+				WithArgs(userId).
+				WillReturnRows(rows)
+
+			if tc.mockGetDetailUser == nil {
+				s.mock.ExpectBegin()
+				s.mock.ExpectQuery(`
+						UPDATE "users" 
+						SET "updated_at"=$1,"name"=$2,"email"=$3,"password"=$4 
+						WHERE id = $5 
+						RETURNING *
+					`).
+					WithArgs(sqlmock.AnyArg(), tc.input.Name, tc.input.Email, tc.input.Password, userId).
+					WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(userId)).
+					WillReturnError(tc.mockErrorPersistUser)
+
+				if tc.mockErrorPersistUser == nil {
+					s.mock.ExpectCommit()
+				} else {
+					s.mock.ExpectRollback()
+				}
+			}
+
+			res, err := s.repo.Update(context.Background(), userId, tc.input)
 			s.Equal(tc.expectedError, err)
 			if err == nil {
 				s.Equal(tc.expectedOutput.Name, res.Name)
