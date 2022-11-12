@@ -23,3 +23,20 @@ func (r *CreateUserRequest) CastToUserEntity() (user *entities.User, err error) 
 	}
 	return
 }
+
+type UpdateUserRequest struct {
+	Name     string `json:"name"`
+	Email    string `json:"email" validate:"email"`
+	Password string `json:"password" validate:"alphanum,min=8"`
+}
+
+func (r *UpdateUserRequest) CastToUserEntity() (user *entities.User, err error) {
+	if mapErr := validator.Validate(r); len(mapErr) > 0 {
+		err = exception.NewBadRequestException().SetModule(entities.UserModule).SetCollectionMessage(mapErr)
+		return
+	}
+	if err = mapstructure.Decode(r, &user); err != nil {
+		return
+	}
+	return
+}

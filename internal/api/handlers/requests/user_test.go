@@ -9,18 +9,18 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type CreateUserRequestTestSuite struct {
+type UserRequestTestSuite struct {
 	suite.Suite
 }
 
-func TestCreateUserRequest(t *testing.T) {
-	suite.Run(t, new(CreateUserRequestTestSuite))
+func TestUserRequest(t *testing.T) {
+	suite.Run(t, new(UserRequestTestSuite))
 }
 
-func (s *CreateUserRequestTestSuite) SetupTest() {
+func (s *UserRequestTestSuite) SetupTest() {
 }
 
-func (s *CreateUserRequestTestSuite) TestConvertToUserEntity() {
+func (s *UserRequestTestSuite) TestConvertCreateUserRequestToUserEntity() {
 	testCases := []struct {
 		name           string
 		input          *request.CreateUserRequest
@@ -50,6 +50,54 @@ func (s *CreateUserRequestTestSuite) TestConvertToUserEntity() {
 			expectedError: exception.NewBadRequestException().SetModule(entities.UserModule).SetCollectionMessage(map[string][]string{
 				"email": {
 					"Email must be a valid email address",
+				},
+			}),
+		},
+	}
+
+	for _, tc := range testCases {
+		user, err := tc.input.CastToUserEntity()
+		s.Run(tc.name, func() {
+			if tc.expectedError == nil {
+				s.Nil(err)
+			} else {
+				s.Equal(tc.expectedError.Error(), err.Error())
+			}
+			s.EqualValues(tc.expectedOutput, user)
+		})
+	}
+}
+
+func (s *UserRequestTestSuite) TestConvertUpdateUserRequestToUserEntity() {
+	testCases := []struct {
+		name           string
+		input          *request.UpdateUserRequest
+		expectedOutput *entities.User
+		expectedError  error
+	}{
+		{
+			name: "should success convert user",
+			input: &request.UpdateUserRequest{
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: "anypassword",
+			},
+			expectedOutput: &entities.User{
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: "anypassword",
+			},
+		},
+		{
+			name: "should return error when not pass validation",
+			input: &request.UpdateUserRequest{
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: "@newPass123",
+			},
+			expectedError: exception.NewBadRequestException().SetModule(entities.UserModule).SetCollectionMessage(map[string][]string{
+				"password": {
+					"Password can only contain alphanumeric characters",
 				},
 			}),
 		},
