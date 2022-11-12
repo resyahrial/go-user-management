@@ -17,3 +17,15 @@ func NewUserResponse(user *entities.User) (res *UserResponse, err error) {
 	}
 	return
 }
+
+func NewListUserResponse(users []*entities.User) (res []*UserResponse, err error) {
+	res = make([]*UserResponse, len(users))
+	for _, user := range users {
+		var userRes *UserResponse
+		if userRes, err = NewUserResponse(user); err != nil {
+			return nil, err
+		}
+		res = append(res, userRes)
+	}
+	return
+}
