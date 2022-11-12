@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	request "github.com/resyahrial/go-user-management/internal/api/handlers/requests"
 	response "github.com/resyahrial/go-user-management/internal/api/handlers/responses"
@@ -131,17 +133,13 @@ func (h *Handler) GetList(c *gin.Context) {
 }
 
 func (h *Handler) DeleteUser(c *gin.Context) {
-	var (
-	// err error
-	)
-
-	// userId := c.Param("id")
-	// if user, err = h.userUsecase.Delete(c.Request.Context(), userId); err != nil {
-	// 	c.Set(middlewares.FailureKey, err)
-	// 	return
-	// }
+	userId := c.Param("id")
+	if err := h.userUsecase.Delete(c.Request.Context(), userId); err != nil {
+		c.Set(middlewares.FailureKey, err)
+		return
+	}
 
 	c.Set(middlewares.SuccessKey, map[string]interface{}{
-		"message": "OK",
+		"message": fmt.Sprintf("success delete user: %s", userId),
 	})
 }
