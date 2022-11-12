@@ -96,15 +96,16 @@ func (h *Handler) GetDetail(c *gin.Context) {
 
 func (h *Handler) GetList(c *gin.Context) {
 	var (
-		err           error
-		queryParamReq *request.PaginatedQueryParams
-		queryParams   *entities.PaginatedQueryParams
-		users         []*entities.User
-		count         int64
-		res           []*response.UserResponse
+		err         error
+		queryParams *entities.PaginatedQueryParams
+		users       []*entities.User
+		count       int64
+		res         []*response.UserResponse
 	)
 
-	if err = c.BindQuery(&queryParamReq); err != nil {
+	queryParamReq := &request.PaginatedQueryParams{}
+
+	if err = queryParamReq.ParseQueryParams(c); err != nil {
 		c.Set(middlewares.FailureKey, err)
 		return
 	}

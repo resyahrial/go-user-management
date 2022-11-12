@@ -102,13 +102,17 @@ func handleSuccess(c *gin.Context, data interface{}) {
 func handleSuccessPaginated(c *gin.Context, data interface{}, paginatedResultValue PaginatedResultValue) {
 	totalPage := 1
 	if paginatedResultValue.Limit < int(paginatedResultValue.Count) {
-		totalPage += int(paginatedResultValue.Count) / paginatedResultValue.Limit
+		addtional := int(paginatedResultValue.Count) / paginatedResultValue.Limit
+		if int(paginatedResultValue.Count)%paginatedResultValue.Limit == 0 {
+			addtional -= 1
+		}
+		totalPage += addtional
 	}
 	s := &success{
 		StatusCode: http.StatusOK,
 		Data:       data,
 		PageInfo: pageInfo{
-			CurrentPage: paginatedResultValue.Page,
+			CurrentPage: paginatedResultValue.Page + 1,
 			TotalPage:   totalPage,
 		},
 	}

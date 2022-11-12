@@ -17,7 +17,7 @@ func GetUserDetailRoute(router *gin.RouterGroup) {
 }
 
 func GetUserListRoute(router *gin.RouterGroup) {
-	router.GET("/", func(c *gin.Context) { Handler.GetList(c) })
+	router.GET("", func(c *gin.Context) { Handler.GetList(c) })
 }
 
 func DeleteUserRoute(router *gin.RouterGroup) {
