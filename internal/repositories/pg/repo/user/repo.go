@@ -2,9 +2,11 @@ package repo
 
 import (
 	"context"
+	"strings"
 
 	"github.com/resyahrial/go-user-management/internal/entities"
 	"github.com/resyahrial/go-user-management/internal/repositories/pg/models"
+	"github.com/resyahrial/go-user-management/pkg/exception"
 	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
 )
@@ -25,6 +27,7 @@ func (u *UserRepoImpl) Create(ctx context.Context, user *entities.User) (res *en
 	var (
 		userModel *models.User
 	)
+	mapError := make(map[string][]string)
 
 	if userModel, err = models.NewUserModel(user); err != nil {
 		return
@@ -32,6 +35,14 @@ func (u *UserRepoImpl) Create(ctx context.Context, user *entities.User) (res *en
 
 	userModel.ID = ksuid.New().String()
 	if err = u.db.WithContext(ctx).Create(userModel).Error; err != nil {
+		if strings.Contains(err.Error(), `duplicate key value violates unique constraint "users_email_key"`) {
+			mapError["email"] = []string{
+				"Email must be unique",
+			}
+		}
+		if len(mapError) > 0 {
+			err = exception.NewBadRequestException().SetModule(entities.UserModule).SetCollectionMessage(mapError)
+		}
 		return
 	}
 
