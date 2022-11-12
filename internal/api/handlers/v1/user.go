@@ -100,6 +100,7 @@ func (h *Handler) GetList(c *gin.Context) {
 		queryParamReq *request.PaginatedQueryParams
 		queryParam    *entities.PaginatedQueryParams
 		users         []*entities.User
+		count         int64
 		res           []*response.UserResponse
 	)
 
@@ -125,4 +126,9 @@ func (h *Handler) GetList(c *gin.Context) {
 	}
 
 	c.Set(middlewares.SuccessKey, res)
+	c.Set(middlewares.PaginatedKey, middlewares.PaginatedResultValue{
+		Page:  queryParam.Page,
+		Limit: queryParam.Limit,
+		Count: count,
+	})
 }

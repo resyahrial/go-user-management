@@ -8,13 +8,26 @@ import (
 )
 
 const (
-	SuccessKey = "SuccessKey"
-	FailureKey = "FailureKey"
+	SuccessKey   = "SuccessKey"
+	FailureKey   = "FailureKey"
+	PaginatedKey = "CountKey"
 )
+
+type PaginatedResultValue struct {
+	Page  int
+	Limit int
+	Count int64
+}
 
 type success struct {
 	StatusCode int         `json:"-"`
 	Data       interface{} `json:"data"`
+	PageInfo   pageInfo    `json:"page_info,omitempty"`
+}
+
+type pageInfo struct {
+	CurrentPage int `json:"current_page"`
+	TotalPage   int `json:"total_page"`
 }
 
 type failure struct {
@@ -34,7 +47,13 @@ func (m *Middleware) ResponseWrapper() gin.HandlerFunc {
 		}
 
 		if data, ok := c.Get(SuccessKey); ok {
-			handleSuccess(c, data)
+			if count, ok := c.Get(PaginatedKey); ok {
+				if paginatedResultValue, ok := count.(PaginatedResultValue); ok {
+					handleSuccessPaginated(c, data, paginatedResultValue)
+				}
+			} else {
+				handleSuccess(c, data)
+			}
 			return
 		}
 	}
@@ -76,6 +95,22 @@ func handleSuccess(c *gin.Context, data interface{}) {
 	s := &success{
 		StatusCode: http.StatusOK,
 		Data:       data,
+	}
+	c.JSON(s.StatusCode, s)
+}
+
+func handleSuccessPaginated(c *gin.Context, data interface{}, paginatedResultValue PaginatedResultValue) {
+	totalPage := 1
+	if paginatedResultValue.Limit < int(paginatedResultValue.Count) {
+		totalPage += int(paginatedResultValue.Count) / paginatedResultValue.Limit
+	}
+	s := &success{
+		StatusCode: http.StatusOK,
+		Data:       data,
+		PageInfo: pageInfo{
+			CurrentPage: paginatedResultValue.Page,
+			TotalPage:   totalPage,
+		},
 	}
 	c.JSON(s.StatusCode, s)
 }
