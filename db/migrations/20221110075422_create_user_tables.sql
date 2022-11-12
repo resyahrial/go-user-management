@@ -1,0 +1,16 @@
+-- migrate:up
+CREATE TABLE IF NOT EXISTS users
+(
+  id VARCHAR(50) NOT NULL PRIMARY KEY,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  is_deleted BOOLEAN,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  PASSWORD VARCHAR(50) UNIQUE NOT NULL
+)
+
+
+-- migrate:down
+DROP TABLE IF EXISTS users
+

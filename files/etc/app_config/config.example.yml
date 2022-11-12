@@ -1,0 +1,16 @@
+app:
+  name: "go-template"
+  host: "localhost"
+  port: 8080
+  debug: true
+
+database:
+  name: ""
+  host: ""
+  port: ""
+  username: ""
+  password: ""
+  maxidleconn: 0
+  maxopenconn: 0
+  connmaxlifetime: 0
+  scheme: ""
