@@ -16,6 +16,7 @@ type (
 	Config struct {
 		App      AppConfig      `yaml:"app"`
 		Database DatabaseConfig `yaml:"database"`
+		Hasher   HasherConfig   `yaml:"hasher"`
 	}
 )
 

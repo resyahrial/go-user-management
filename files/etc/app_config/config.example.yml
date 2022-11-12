@@ -14,3 +14,6 @@ database:
   maxopenconn: 0
   connmaxlifetime: 0
   scheme: ""
+
+hasher:
+  cost: 0

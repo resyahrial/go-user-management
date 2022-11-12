@@ -11,17 +11,21 @@ import (
 	"github.com/resyahrial/go-user-management/internal/entities"
 	"github.com/resyahrial/go-user-management/internal/repositories/pg/repo/user"
 	"github.com/resyahrial/go-user-management/internal/usecase/user"
+	"github.com/resyahrial/go-user-management/pkg/hasher"
 	"gorm.io/gorm"
 )
 
 // Injectors from injector.go:
 
-func InitUserUsecase(db *gorm.DB) entities.UserUsecase {
+func InitUserUsecase(db *gorm.DB, hasherCost int) entities.UserUsecase {
 	userRepoImpl := repo.NewUserRepo(db)
-	userUsecase := usecase.NewUserUsecase(userRepoImpl)
+	hasherHasher := hasher.New(hasherCost)
+	userUsecase := usecase.NewUserUsecase(userRepoImpl, hasherHasher)
 	return userUsecase
 }
 
 // injector.go:
 
 var userRepoAdapterSet = wire.NewSet(repo.NewUserRepo, wire.Bind(new(usecase.UserRepo), new(*repo.UserRepoImpl)))
+
+var hasherAdapterSet = wire.NewSet(hasher.New, wire.Bind(new(usecase.Hasher), new(*hasher.Hasher)))

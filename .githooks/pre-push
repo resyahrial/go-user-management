@@ -1,0 +1,41 @@
+#!/bin/sh
+
+printf "===========\n"
+printf "Checking current git status...\n"
+printf "Did you forget to commit anything?\n"
+printf "Is it in the correct branch?\n"
+printf "===========\n"
+
+git status
+
+printf "Waiting."
+sleep 1
+printf "."
+sleep 1
+printf "."
+sleep 1
+printf ".\n"
+
+# printf "===========\n"
+# printf "Building..\n"
+# go build -o temp-main main.go 
+# if [ $? -ne 0 ]; then
+#   printf "\nBuild FAILED\n"
+#   printf "Push FAILED\n\n"
+#   exit 1
+# fi
+# rm temp-main
+# printf "Build OK\n"
+
+printf "===========\n"
+printf "Testing..\n"
+go test ./... -cover -count=1
+if [ $? -ne 0 ]; then
+  printf "\nTest FAILED\n"
+  printf "Push FAILED\n\n"
+  exit 1
+fi
+printf "Test OK\n"
+
+printf "===========\n"
+printf "Pushing..\n"
