@@ -12,6 +12,7 @@ type UserRepo interface {
 	Update(ctx context.Context, id string, user *entities.User) (res *entities.User, err error)
 	GetById(ctx context.Context, id string) (res *entities.User, err error)
 	GetList(ctx context.Context, params *entities.PaginatedQueryParams) (users []*entities.User, count int64, err error)
+	Delete(ctx context.Context, id string) (err error)
 }
 
 //go:generate mockgen -destination=mocks/mock.go -source=adapter.go Hasher

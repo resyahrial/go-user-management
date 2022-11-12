@@ -127,3 +127,23 @@ func (u *UserRepoImpl) GetList(ctx context.Context, params *entities.PaginatedQu
 
 	return
 }
+
+func (u *UserRepoImpl) Delete(ctx context.Context, id string) (err error) {
+	result := u.db.WithContext(ctx).Model(&models.User{}).Where("id = ? AND is_deleted != true", id)
+	if err = result.First(&models.User{}).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = ErrUserNotFound
+		}
+		return
+	}
+
+	if err = result.Clauses(clause.Returning{}).Updates(&models.User{
+		CommonField: models.CommonField{
+			IsDeleted: true,
+		},
+	}).Error; err != nil {
+		return
+	}
+
+	return
+}

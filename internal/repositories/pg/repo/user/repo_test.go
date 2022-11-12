@@ -321,3 +321,58 @@ func (s *UserRepoTestSuite) TestGetUserList() {
 		})
 	}
 }
+
+func (s *UserRepoTestSuite) TestDeleteUser() {
+	userId := ksuid.New().String()
+
+	testCases := []struct {
+		name            string
+		isUserFound     bool
+		mockDeleteError error
+		expectedError   error
+	}{
+		{
+			name:        "should delete user",
+			isUserFound: true,
+		},
+		{
+			name:            "should return error when occur error when delete user",
+			isUserFound:     true,
+			mockDeleteError: errors.New("failed to delete user"),
+			expectedError:   errors.New("failed to delete user"),
+		},
+		{
+			name:          "should return error when user data not found",
+			expectedError: repo.ErrUserNotFound,
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			rows := sqlmock.NewRows([]string{"id"})
+			if tc.isUserFound {
+				rows = rows.AddRow(userId)
+			}
+			s.mock.ExpectQuery(`SELECT * FROM "users" WHERE id = $1 AND is_deleted != true ORDER BY "users"."id" LIMIT 1`).
+				WithArgs(userId).
+				WillReturnRows(rows)
+
+			if tc.isUserFound {
+				s.mock.ExpectBegin()
+				s.mock.ExpectQuery(`UPDATE "users" SET "updated_at"=$1,"is_deleted"=$2 WHERE id = $3 AND is_deleted != true RETURNING *`).
+					WithArgs(sqlmock.AnyArg(), true, userId).
+					WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(userId)).
+					WillReturnError(tc.mockDeleteError)
+
+				if tc.mockDeleteError == nil {
+					s.mock.ExpectCommit()
+				} else {
+					s.mock.ExpectRollback()
+				}
+			}
+
+			err := s.repo.Delete(context.Background(), userId)
+			s.Equal(tc.expectedError, err)
+		})
+	}
+}
