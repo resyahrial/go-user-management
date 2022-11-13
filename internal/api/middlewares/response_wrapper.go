@@ -81,7 +81,7 @@ func handleError(c *gin.Context, err error) {
 		})
 	}
 
-	c.JSON(f.StatusCode, f)
+	c.AbortWithStatusJSON(f.StatusCode, f)
 }
 
 func generateFailure(statusCode int, errResponse interface{}) *failure {

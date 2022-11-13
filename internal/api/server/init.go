@@ -26,7 +26,7 @@ func InitGinEngine(cfg config.Config, db *gorm.DB) *gin.Engine {
 	gin.SetMode(ginMode)
 	r := gin.New()
 
-	customMiddleware := middlewares.NewMiddleware()
+	customMiddleware := middlewares.NewMiddleware(middlewares.MiddlewareOpts{})
 
 	r.Use(customMiddleware.ResponseWrapper())
 
@@ -38,5 +38,5 @@ func InitGinEngine(cfg config.Config, db *gorm.DB) *gin.Engine {
 		c.Set(middlewares.FailureKey, errors.New("route not found"))
 	})
 
-	return route.InitRoutes(r, db, cfg.Hasher.Cost)
+	return route.InitRoutes(r, cfg, db)
 }

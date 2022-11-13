@@ -17,6 +17,7 @@ type (
 		App      AppConfig      `yaml:"app"`
 		Database DatabaseConfig `yaml:"database"`
 		Hasher   HasherConfig   `yaml:"hasher"`
+		Auth     AuthConfig     `yaml:"auth"`
 	}
 )
 

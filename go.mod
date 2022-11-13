@@ -46,6 +46,7 @@ require (
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/gin-gonic/gin v1.8.1
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/wire v0.5.0
 	github.com/ilyakaznacheev/cleanenv v1.3.0
 	github.com/mitchellh/mapstructure v1.5.0

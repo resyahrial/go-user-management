@@ -10,9 +10,12 @@ import (
 	"github.com/google/wire"
 	"github.com/resyahrial/go-user-management/internal/entities"
 	"github.com/resyahrial/go-user-management/internal/repositories/pg/repo/user"
+	usecase2 "github.com/resyahrial/go-user-management/internal/usecase/auth"
 	"github.com/resyahrial/go-user-management/internal/usecase/user"
+	"github.com/resyahrial/go-user-management/pkg/authorization"
 	"github.com/resyahrial/go-user-management/pkg/hasher"
 	"gorm.io/gorm"
+	"time"
 )
 
 // Injectors from injector.go:
@@ -24,8 +27,22 @@ func InitUserUsecase(db *gorm.DB, hasherCost int) entities.UserUsecase {
 	return userUsecase
 }
 
+func InitAuthUsecase(db *gorm.DB, hasherCost int, tokenDuration time.Duration, secretKey string) entities.AuthUsecase {
+	userRepoImpl := repo.NewUserRepo(db)
+	hasherHasher := hasher.New(hasherCost)
+	jwtAuthorization := authorization.NewJwtAuthorization(tokenDuration, secretKey)
+	authUsecase := usecase2.NewAuthUsecase(userRepoImpl, hasherHasher, jwtAuthorization)
+	return authUsecase
+}
+
 // injector.go:
 
-var userRepoAdapterSet = wire.NewSet(repo.NewUserRepo, wire.Bind(new(usecase.UserRepo), new(*repo.UserRepoImpl)))
+var userRepoUserUsecaseAdapterSet = wire.NewSet(repo.NewUserRepo, wire.Bind(new(usecase.UserRepo), new(*repo.UserRepoImpl)))
 
-var hasherAdapterSet = wire.NewSet(hasher.New, wire.Bind(new(usecase.Hasher), new(*hasher.Hasher)))
+var hasherUserUsecaseAdapterSet = wire.NewSet(hasher.New, wire.Bind(new(usecase.Hasher), new(*hasher.Hasher)))
+
+var userRepoAuthUsecaseAdapterSet = wire.NewSet(repo.NewUserRepo, wire.Bind(new(usecase2.UserRepo), new(*repo.UserRepoImpl)))
+
+var hasherAuthUsecaseAdapterSet = wire.NewSet(hasher.New, wire.Bind(new(usecase2.Hasher), new(*hasher.Hasher)))
+
+var tokenHandlerAdapterSet = wire.NewSet(authorization.NewJwtAuthorization, wire.Bind(new(usecase2.TokenHandler), new(*authorization.JwtAuthorization)))
