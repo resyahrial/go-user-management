@@ -147,3 +147,18 @@ func (u *UserRepoImpl) Delete(ctx context.Context, id string) (err error) {
 
 	return
 }
+
+func (u *UserRepoImpl) GetByEmail(ctx context.Context, email string) (res *entities.User, err error) {
+	var (
+		userModel *models.User
+	)
+
+	if err = u.db.WithContext(ctx).Model(&models.User{}).Where("email = ? AND is_deleted != true", email).First(&userModel).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = ErrUserNotFound
+		}
+		return
+	}
+
+	return userModel.ConvertToEntity()
+}

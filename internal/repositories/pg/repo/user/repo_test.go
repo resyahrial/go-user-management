@@ -377,3 +377,55 @@ func (s *UserRepoTestSuite) TestDeleteUser() {
 		})
 	}
 }
+
+func (s *UserRepoTestSuite) TestGetUserByEmail() {
+	userId := ksuid.New().String()
+	email := "user@mail.com"
+
+	testCases := []struct {
+		name                 string
+		input                *entities.User
+		mockGetDetailUser    error
+		mockErrorPersistUser error
+		expectedError        error
+		expectedOutput       *entities.User
+	}{
+		{
+			name: "should get user detail",
+			expectedOutput: &entities.User{
+				ID:       userId,
+				Name:     "user",
+				Email:    email,
+				Password: "anypassword",
+			},
+		},
+		{
+			name:              "should return error when user data not found",
+			mockGetDetailUser: gorm.ErrRecordNotFound,
+			expectedError:     repo.ErrUserNotFound,
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			rows := sqlmock.NewRows([]string{"id", "name", "email", "password"})
+			if tc.mockGetDetailUser == nil {
+				rows = rows.AddRow(userId, "user", email, "anypassword")
+			}
+			s.mock.ExpectQuery(`SELECT * FROM "users" WHERE email = $1 AND is_deleted != true ORDER BY "users"."id" LIMIT 1`).
+				WithArgs(email).
+				WillReturnRows(rows)
+
+			res, err := s.repo.GetByEmail(context.Background(), email)
+			s.Equal(tc.expectedError, err)
+			if err == nil {
+				s.Equal(tc.expectedOutput.Name, res.Name)
+				s.Equal(tc.expectedOutput.Email, res.Email)
+				s.Equal(tc.expectedOutput.Password, res.Password)
+				s.NotEmpty(res.ID)
+			} else {
+				s.Nil(res)
+			}
+		})
+	}
+}
