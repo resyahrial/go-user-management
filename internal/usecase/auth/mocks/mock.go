@@ -50,6 +50,21 @@ func (mr *MockUserRepoMockRecorder) GetByEmail(ctx, email interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockUserRepo)(nil).GetByEmail), ctx, email)
 }
 
+// GetById mocks base method.
+func (m *MockUserRepo) GetById(ctx context.Context, id string) (*entities.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetById", ctx, id)
+	ret0, _ := ret[0].(*entities.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetById indicates an expected call of GetById.
+func (mr *MockUserRepoMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockUserRepo)(nil).GetById), ctx, id)
+}
+
 // MockHasher is a mock of Hasher interface.
 type MockHasher struct {
 	ctrl     *gomock.Controller
@@ -108,6 +123,21 @@ func NewMockTokenHandler(ctrl *gomock.Controller) *MockTokenHandler {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockTokenHandler) EXPECT() *MockTokenHandlerMockRecorder {
 	return m.recorder
+}
+
+// ParseToken mocks base method.
+func (m *MockTokenHandler) ParseToken(tokenString string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ParseToken", tokenString)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseToken indicates an expected call of ParseToken.
+func (mr *MockTokenHandlerMockRecorder) ParseToken(tokenString interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseToken", reflect.TypeOf((*MockTokenHandler)(nil).ParseToken), tokenString)
 }
 
 // SignToken mocks base method.

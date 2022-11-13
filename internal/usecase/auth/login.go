@@ -26,7 +26,7 @@ func (u *AuthUsecaseImpl) Login(ctx context.Context, input *entities.Login) (tok
 		return
 	}
 
-	if accessToken, err = u.TokenHandler.SignToken(map[string]interface{}{
+	if accessToken, err = u.AccessTokenHandler.SignToken(map[string]interface{}{
 		"id": user.ID,
 	}); err != nil {
 		return

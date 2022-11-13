@@ -58,15 +58,11 @@ func (j *JwtAuthorization) ParseToken(tokenString string) (id string, err error)
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
-	fmt.Println(claims)
-	eat, _ := claims["eat"].(float64)
-	log.Println(int64(eat), time.Now().Unix())
 	if !ok || !token.Valid {
 		log.Println("[Jwt - Parse Token] error when check claims: invalid claims")
 		return
 	}
 	if eat, _ := claims["eat"].(float64); int64(eat) < time.Now().Unix() {
-		log.Println(eat)
 		log.Println("[Jwt - Parse Token] error when check claims: token expired")
 		err = ErrInvalidToken
 		return

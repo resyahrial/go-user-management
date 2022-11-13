@@ -9,6 +9,7 @@ import (
 //go:generate mockgen -destination=mocks/mock.go -source=adapter.go UserRepo
 type UserRepo interface {
 	GetByEmail(ctx context.Context, email string) (res *entities.User, err error)
+	GetById(ctx context.Context, id string) (res *entities.User, err error)
 }
 
 //go:generate mockgen -destination=mocks/mock.go -source=adapter.go Hasher
@@ -19,4 +20,5 @@ type Hasher interface {
 //go:generate mockgen -destination=mocks/mock.go -source=adapter.go TokenHandler
 type TokenHandler interface {
 	SignToken(claims map[string]interface{}) (tokenString string, err error)
+	ParseToken(tokenString string) (id string, err error)
 }

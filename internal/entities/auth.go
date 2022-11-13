@@ -17,4 +17,5 @@ type Token struct {
 
 type AuthUsecase interface {
 	Login(ctx context.Context, input *Login) (token *Token, err error)
+	ValidateAccessToken(ctx context.Context, accessToken string) (user *User, err error)
 }
