@@ -5,5 +5,5 @@ import (
 )
 
 func LoginRoute(router *gin.RouterGroup) {
-	router.POST("", func(c *gin.Context) { Handler.Login(c) })
+	router.POST("/login", func(c *gin.Context) { Handler.Login(c) })
 }
