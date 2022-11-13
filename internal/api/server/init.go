@@ -26,7 +26,7 @@ func InitGinEngine(cfg config.Config, db *gorm.DB) *gin.Engine {
 	gin.SetMode(ginMode)
 	r := gin.New()
 
-	customMiddleware := middlewares.NewMiddleware()
+	customMiddleware := middlewares.NewMiddleware(middlewares.MiddlewareOpts{})
 
 	r.Use(customMiddleware.ResponseWrapper())
 
