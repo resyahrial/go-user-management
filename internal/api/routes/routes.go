@@ -2,16 +2,18 @@ package route
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/resyahrial/go-user-management/config"
 	v1_handlers "github.com/resyahrial/go-user-management/internal/api/handlers/v1"
 	v1_routes "github.com/resyahrial/go-user-management/internal/api/routes/v1"
 	"gorm.io/gorm"
 )
 
-func InitRoutes(r *gin.Engine, db *gorm.DB, hashCost int) *gin.Engine {
-	v1_routes.Handler = v1_handlers.NewHandler(db, hashCost)
+func InitRoutes(r *gin.Engine, cfg config.Config, db *gorm.DB) *gin.Engine {
+	v1_routes.Handler = v1_handlers.NewHandler(cfg, db)
 	v1Path := r.Group("/api/v1")
 	{
 		v1_routes.HealthCheckRoute(v1Path)
+		v1_routes.LoginRoute(v1Path)
 	}
 
 	userPath := v1Path.Group("/users")

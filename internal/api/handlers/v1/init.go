@@ -1,6 +1,9 @@
 package v1
 
 import (
+	"time"
+
+	"github.com/resyahrial/go-user-management/config"
 	"github.com/resyahrial/go-user-management/internal/entities"
 	"github.com/resyahrial/go-user-management/internal/factory"
 	"gorm.io/gorm"
@@ -8,10 +11,14 @@ import (
 
 type Handler struct {
 	userUsecase entities.UserUsecase
+	authUsecase entities.AuthUsecase
 }
 
-func NewHandler(db *gorm.DB, hashCost int) *Handler {
+func NewHandler(cfg config.Config, db *gorm.DB) *Handler {
+	timeDuration := 10 * time.Second
+	secret := "secret"
 	return &Handler{
-		userUsecase: factory.InitUserUsecase(db, hashCost),
+		userUsecase: factory.InitUserUsecase(db, cfg.Hasher.Cost),
+		authUsecase: factory.InitAuthUsecase(db, cfg.Hasher.Cost, timeDuration, secret),
 	}
 }
