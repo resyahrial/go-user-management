@@ -8,7 +8,7 @@ type AuthUsecaseImpl struct {
 	TokenHandler
 }
 
-func NewUserUsecase(
+func NewAuthUsecase(
 	userRepo UserRepo,
 	hash Hasher,
 	tokenHandler TokenHandler,
