@@ -11,19 +11,10 @@ import (
 
 type JwtAuthorizationTestSuite struct {
 	suite.Suite
-	timeDuration time.Duration
-	secretKey    string
-	auth         *authorization.JwtAuthorization
 }
 
 func TestJwtAuthorization(t *testing.T) {
 	suite.Run(t, new(JwtAuthorizationTestSuite))
-}
-
-func (s *JwtAuthorizationTestSuite) SetupTest() {
-	s.timeDuration = 10 * time.Second
-	s.secretKey = "secret"
-	s.auth = authorization.NewJwtAuthorization(s.timeDuration, s.secretKey)
 }
 
 func (s *JwtAuthorizationTestSuite) TestSignToken() {
@@ -38,21 +29,73 @@ func (s *JwtAuthorizationTestSuite) TestSignToken() {
 				"id": ksuid.New().String(),
 			},
 		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			auth := authorization.NewJwtAuthorization(10*time.Second, "secret")
+			token, err := auth.SignToken(tc.claims)
+			s.Equal(tc.expectedError, err)
+			if tc.expectedError == nil {
+				s.NotEmpty(token)
+			} else {
+				s.Empty(token)
+			}
+		})
+	}
+}
+
+func (s *JwtAuthorizationTestSuite) TestParseToken() {
+	testCases := []struct {
+		name          string
+		timeDuration  time.Duration
+		secretKey     string
+		id            string
+		expectedError error
+	}{
 		{
-			name:          "should return error when claims not contain id",
-			claims:        map[string]interface{}{},
+			name:         "should success parse token",
+			timeDuration: 10 * time.Second,
+			secretKey:    "secret",
+			id:           ksuid.New().String(),
+		},
+		{
+			name:          "should return error when token not contains id",
+			timeDuration:  10 * time.Second,
+			secretKey:     "secret",
+			expectedError: authorization.ErrInvalidToken,
+		},
+		{
+			name:          "should return error when token expired",
+			timeDuration:  1 * time.Millisecond,
+			secretKey:     "secret",
+			id:            ksuid.New().String(),
 			expectedError: authorization.ErrInvalidToken,
 		},
 	}
 
 	for _, tc := range testCases {
 		s.Run(tc.name, func() {
-			token, err := s.auth.SignToken(tc.claims)
+			auth := authorization.NewJwtAuthorization(tc.timeDuration, tc.secretKey)
+			claims := make(map[string]interface{})
+			if tc.id != "" {
+				claims["id"] = tc.id
+			}
+			token, _ := auth.SignToken(claims)
+			s.NotEmpty(token)
+
+			// simulate token expired
+			delay := 1 * time.Second
+			if tc.timeDuration < delay {
+				time.Sleep(delay)
+			}
+
+			resId, err := auth.ParseToken(token)
 			s.Equal(tc.expectedError, err)
 			if tc.expectedError == nil {
-				s.NotEmpty(token)
+				s.Equal(tc.id, resId)
 			} else {
-				s.Empty(token)
+				s.Empty(resId)
 			}
 		})
 	}
