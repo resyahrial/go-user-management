@@ -162,3 +162,18 @@ func (u *UserRepoImpl) GetByEmail(ctx context.Context, email string) (res *entit
 
 	return userModel.ConvertToEntity()
 }
+
+func (u *UserRepoImpl) GetByIdWithPermission(ctx context.Context, id string) (res *entities.User, err error) {
+	var (
+		userModel *models.User
+	)
+
+	if err = u.db.WithContext(ctx).Model(&models.User{}).Where("id = ? AND is_deleted != true", id).First(&userModel).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = ErrUserNotFound
+		}
+		return
+	}
+
+	return userModel.ConvertToEntity()
+}
