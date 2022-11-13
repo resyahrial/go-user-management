@@ -17,3 +17,7 @@ database:
 
 hasher:
   cost: 0
+
+auth:
+  accesstimeduration: 0 # in second
+  accesssecretkey: ""

@@ -14,10 +14,10 @@ const (
 
 type (
 	Config struct {
-		App           AppConfig           `yaml:"app"`
-		Database      DatabaseConfig      `yaml:"database"`
-		Hasher        HasherConfig        `yaml:"hasher"`
-		Authorization AuthorizationConfig `yaml:"authorization"`
+		App      AppConfig      `yaml:"app"`
+		Database DatabaseConfig `yaml:"database"`
+		Hasher   HasherConfig   `yaml:"hasher"`
+		Auth     AuthConfig     `yaml:"auth"`
 	}
 )
 

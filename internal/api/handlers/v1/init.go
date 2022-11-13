@@ -17,6 +17,6 @@ type Handler struct {
 func NewHandler(cfg config.Config, db *gorm.DB) *Handler {
 	return &Handler{
 		userUsecase: factory.InitUserUsecase(db, cfg.Hasher.Cost),
-		authUsecase: factory.InitAuthUsecase(db, cfg.Hasher.Cost, time.Duration(cfg.Authorization.AccessTimeDuration*int(time.Second)), cfg.Authorization.AccessSecretKey),
+		authUsecase: factory.InitAuthUsecase(db, cfg.Hasher.Cost, time.Duration(cfg.Auth.AccessTimeDuration*int(time.Second)), cfg.Auth.AccessSecretKey),
 	}
 }
