@@ -1,4 +1,4 @@
-package seeds
+package seed
 
 import (
 	"github.com/resyahrial/go-user-management/config"
