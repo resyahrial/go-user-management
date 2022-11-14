@@ -65,6 +65,21 @@ func (mr *MockUserRepoMockRecorder) GetById(ctx, id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockUserRepo)(nil).GetById), ctx, id)
 }
 
+// GetByIdWithPermission mocks base method.
+func (m *MockUserRepo) GetByIdWithPermission(ctx context.Context, id string) (*entities.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByIdWithPermission", ctx, id)
+	ret0, _ := ret[0].(*entities.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByIdWithPermission indicates an expected call of GetByIdWithPermission.
+func (mr *MockUserRepoMockRecorder) GetByIdWithPermission(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByIdWithPermission", reflect.TypeOf((*MockUserRepo)(nil).GetByIdWithPermission), ctx, id)
+}
+
 // MockHasher is a mock of Hasher interface.
 type MockHasher struct {
 	ctrl     *gomock.Controller

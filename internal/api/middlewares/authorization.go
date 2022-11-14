@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	UserKey = "UserKey"
+	UserIDKey = "UserIDKey"
 )
 
 func (m *Middleware) Authorization() gin.HandlerFunc {
@@ -25,7 +25,7 @@ func (m *Middleware) Authorization() gin.HandlerFunc {
 			handleError(c, err)
 			return
 		}
-		c.Set(UserKey, user)
+		c.Set(UserIDKey, user.ID)
 		c.Next()
 	}
 }

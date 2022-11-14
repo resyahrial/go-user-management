@@ -162,3 +162,36 @@ func (u *UserRepoImpl) GetByEmail(ctx context.Context, email string) (res *entit
 
 	return userModel.ConvertToEntity()
 }
+
+func (u *UserRepoImpl) GetByIdWithPermission(ctx context.Context, id string) (res *entities.User, err error) {
+	var (
+		userModel *models.User
+	)
+
+	if err = u.db.WithContext(ctx).
+		Model(&models.User{}).
+		Where("id = ? AND is_deleted != true", id).
+		Preload("Role").Preload("Role.RolePermissions").Preload("Role.RolePermissions.Permission").
+		First(&userModel).
+		Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = ErrUserNotFound
+		}
+		return
+	}
+
+	if res, err = userModel.ConvertToEntity(); err != nil {
+		return
+	}
+	res.Role.Permissions = make([]*entities.Permission, 0)
+	for _, rp := range userModel.Role.RolePermissions {
+		p := &rp.Permission
+		if entityPermission, errConvert := p.ConvertToEntity(); errConvert != nil {
+			return nil, errConvert
+		} else {
+			res.Role.Permissions = append(res.Role.Permissions, entityPermission)
+		}
+	}
+
+	return
+}

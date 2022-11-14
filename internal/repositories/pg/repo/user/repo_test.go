@@ -64,6 +64,7 @@ func (s *UserRepoTestSuite) TestCreateUser() {
 				Name:     "user",
 				Email:    "user@mail.com",
 				Password: "anypassword",
+				RoleName: "USER",
 			},
 			expectedOutput: &entities.User{
 				Name:     "user",
@@ -77,6 +78,7 @@ func (s *UserRepoTestSuite) TestCreateUser() {
 				Name:     "user",
 				Email:    "user@mail.com",
 				Password: "anypassword",
+				RoleName: "USER",
 			},
 			mockErrorPersistUser: errors.New("failed to persist user"),
 			expectedError:        errors.New("failed to persist user"),
@@ -87,10 +89,10 @@ func (s *UserRepoTestSuite) TestCreateUser() {
 		s.Run(tc.name, func() {
 			s.mock.ExpectBegin()
 			s.mock.ExpectExec(`
-					INSERT INTO "users" ("id","created_at","updated_at","is_deleted","name","email","password")
-					VALUES ($1,$2,$3,$4,$5,$6,$7)
+					INSERT INTO "users" ("id","created_at","updated_at","is_deleted","name","email","password","role_name")
+					VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
 				`).
-				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), false, tc.input.Name, tc.input.Email, tc.input.Password).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), false, tc.input.Name, tc.input.Email, tc.input.Password, tc.input.RoleName).
 				WillReturnResult(sqlmock.NewResult(1, 1)).
 				WillReturnError(tc.mockErrorPersistUser)
 
@@ -423,6 +425,82 @@ func (s *UserRepoTestSuite) TestGetUserByEmail() {
 				s.Equal(tc.expectedOutput.Email, res.Email)
 				s.Equal(tc.expectedOutput.Password, res.Password)
 				s.NotEmpty(res.ID)
+			} else {
+				s.Nil(res)
+			}
+		})
+	}
+}
+
+func (s *UserRepoTestSuite) TestGetUserByIdWithPermission() {
+	userId := ksuid.New().String()
+
+	testCases := []struct {
+		name                 string
+		input                *entities.User
+		mockGetDetailUser    error
+		mockErrorPersistUser error
+		expectedError        error
+		expectedOutput       *entities.User
+	}{
+		{
+			name: "should get user detail with permissions",
+			expectedOutput: &entities.User{
+				ID:       userId,
+				Name:     "user",
+				Email:    "user@mail.com",
+				Password: "anypassword",
+				Role: &entities.Role{
+					Name: "ADMIN",
+					Permissions: []*entities.Permission{
+						{
+							Resource: "users",
+							Action:   "WRITE",
+							Type:     "GLOBAL",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			rows := sqlmock.NewRows([]string{"id", "name", "email", "password", "role_name"})
+			if tc.mockGetDetailUser == nil {
+				rows = rows.AddRow(userId, "user", "user@mail.com", "anypassword", "ADMIN")
+			}
+			s.mock.ExpectQuery(`SELECT * FROM "users" WHERE id = $1 AND is_deleted != true ORDER BY "users"."id" LIMIT 1`).
+				WithArgs(userId).
+				WillReturnRows(rows)
+
+			s.mock.ExpectQuery(`SELECT * FROM "roles" WHERE "roles"."name" = $1`).
+				WithArgs("ADMIN").
+				WillReturnRows(sqlmock.NewRows([]string{"name"}).AddRow("ADMIN"))
+
+			s.mock.ExpectQuery(`SELECT * FROM "roles_permissions" WHERE "roles_permissions"."role_name" = $1`).
+				WithArgs("ADMIN").
+				WillReturnRows(sqlmock.NewRows([]string{"role_name", "permission_id"}).AddRow("ADMIN", "admin_users_write_global"))
+
+			s.mock.ExpectQuery(`SELECT * FROM "permissions" WHERE "permissions"."id" = $1`).
+				WithArgs("admin_users_write_global").
+				WillReturnRows(sqlmock.NewRows([]string{"id", "resource", "action", "type"}).AddRow("admin_users_write_global", "users", "WRITE", "GLOBAL"))
+
+			res, err := s.repo.GetByIdWithPermission(context.Background(), userId)
+			s.Equal(tc.expectedError, err)
+			if err == nil {
+				s.Equal(tc.expectedOutput.Name, res.Name)
+				s.Equal(tc.expectedOutput.Email, res.Email)
+				s.Equal(tc.expectedOutput.Password, res.Password)
+				s.Equal(tc.expectedOutput.Role.Name, res.Role.Name)
+				s.Len(res.Role.Permissions, len(tc.expectedOutput.Role.Permissions))
+				s.NotEmpty(res.ID)
+				if len(tc.expectedOutput.Role.Permissions) > 0 {
+					expectedPermission := tc.expectedOutput.Role.Permissions[0]
+					s.Equal(expectedPermission.Action, res.Role.Permissions[0].Action)
+					s.Equal(expectedPermission.Type, res.Role.Permissions[0].Type)
+					s.Equal(expectedPermission.Type, res.Role.Permissions[0].Type)
+				}
 			} else {
 				s.Nil(res)
 			}

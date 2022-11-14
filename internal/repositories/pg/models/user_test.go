@@ -14,6 +14,7 @@ func TestNewUserModel(t *testing.T) {
 		Name:     "user",
 		Email:    "user@mail.com",
 		Password: "anypassword",
+		RoleName: "USER",
 	}
 
 	user, err := models.NewUserModel(userEntity)
@@ -22,6 +23,7 @@ func TestNewUserModel(t *testing.T) {
 	assert.Equal(t, userEntity.Name, user.Name)
 	assert.Equal(t, userEntity.Email, user.Email)
 	assert.Equal(t, userEntity.Password, user.Password)
+	assert.Equal(t, userEntity.RoleName, user.RoleName)
 }
 
 func TestConvertToEntityUser(t *testing.T) {
@@ -32,6 +34,9 @@ func TestConvertToEntityUser(t *testing.T) {
 		Name:     "user",
 		Email:    "user@mail.com",
 		Password: "anypassword",
+		Role: models.Role{
+			Name: "ADMIN",
+		},
 	}
 
 	userEntity, err := user.ConvertToEntity()
@@ -41,4 +46,5 @@ func TestConvertToEntityUser(t *testing.T) {
 	assert.EqualValues(t, user.Name, userEntity.Name)
 	assert.EqualValues(t, user.Email, userEntity.Email)
 	assert.EqualValues(t, user.Password, userEntity.Password)
+	assert.Equal(t, user.Role.Name, userEntity.Role.Name)
 }

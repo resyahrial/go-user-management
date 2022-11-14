@@ -52,18 +52,21 @@ func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
 				Name:     "user",
 				Email:    "user@mail.com",
 				Password: "anypassword",
+				RoleName: "USER",
 			},
 			resultMockCreateUser: &entities.User{
 				ID:       userId,
 				Name:     "user",
 				Email:    "user@mail.com",
 				Password: hashedPassword,
+				RoleName: "USER",
 			},
 			expectedOutput: &entities.User{
 				ID:       userId,
 				Name:     "user",
 				Email:    "user@mail.com",
 				Password: hashedPassword,
+				RoleName: "USER",
 			},
 		},
 		{
@@ -72,6 +75,7 @@ func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
 				Name:     "user",
 				Email:    "user@mail.com",
 				Password: "anypassword",
+				RoleName: "USER",
 			},
 			errorMockCreateUser: errors.New("failed persist user"),
 			expectedError:       errors.New("failed persist user"),
@@ -86,6 +90,7 @@ func (s *CreateUserUsecaseTestSuite) TestCreateUser() {
 				Name:     tc.input.Name,
 				Email:    tc.input.Email,
 				Password: hashedPassword,
+				RoleName: tc.input.RoleName,
 			}
 
 			s.userRepo.EXPECT().Create(gomock.Any(), hashedInput).Return(tc.resultMockCreateUser, tc.errorMockCreateUser)

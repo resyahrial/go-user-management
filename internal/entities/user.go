@@ -6,6 +6,8 @@ import (
 
 const (
 	UserModule = "USER"
+	AdminRole  = "ADMIN"
+	UserRole   = "USER"
 )
 
 type User struct {
@@ -13,6 +15,23 @@ type User struct {
 	Name     string
 	Email    string
 	Password string
+	RoleName string
+	Role     *Role
+}
+
+type Role struct {
+	Name        string
+	Permissions []*Permission
+}
+
+type Permission struct {
+	Resource string
+	Action   string
+	Type     string
+}
+
+func (p *Permission) IsGlobalPermission() bool {
+	return p.Type == "GLOBAL"
 }
 
 type UserUsecase interface {

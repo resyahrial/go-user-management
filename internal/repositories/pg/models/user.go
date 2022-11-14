@@ -10,6 +10,8 @@ type User struct {
 	Name     string
 	Email    string
 	Password string
+	RoleName string
+	Role     Role `gorm:"foreignKey:RoleName;references:Name"`
 }
 
 func NewUserModel(userEntity *entities.User) (user *User, err error) {
@@ -24,5 +26,8 @@ func (u *User) ConvertToEntity() (userEntity *entities.User, err error) {
 		return
 	}
 	userEntity.ID = u.ID
+	if u.Role.Name == "" {
+		userEntity.Role = nil
+	}
 	return
 }
