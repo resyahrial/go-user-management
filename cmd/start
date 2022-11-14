@@ -12,5 +12,5 @@ done
 
 # if config on env file
 source files/etc/env/env.$Env.sh
-dbmate -u $DATABASE_URL up
+docker run --rm -it --network=host -v "$(pwd)/db:/db" amacneil/dbmate -u $DATABASE_URL up
 go run ./cmd/app-http/*.go

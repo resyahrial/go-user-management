@@ -3,7 +3,8 @@ INSERT INTO
   roles ("name", "description")
 VALUES
   ('ADMIN', 'Role which allow user full access to all resources'),
-  ('USER', 'Role which restrictied access to few resources');
+  ('USER', 'Role which restrictied access to few resources')
+ON CONFLICT DO NOTHING;
 
 UPDATE users
 SET role_name='USER'
