@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/resyahrial/go-user-management/config"
+	seed "github.com/resyahrial/go-user-management/internal/repositories/pg/seeds"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormLogger "gorm.io/gorm/logger"
@@ -49,6 +50,9 @@ func InitDatabase(cfg config.Config) *gorm.DB {
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 	sqlDB.SetConnMaxLifetime(time.Duration(cfg.Database.ConnMaxLifetime) * time.Hour)
 
-	log.Println("failed to initiate database object")
+	log.Println("success to initiate database object")
+
+	// seeding programatically
+	seed.AutoSeeding(DbInstance, cfg)
 	return DbInstance
 }

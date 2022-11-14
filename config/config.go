@@ -18,6 +18,7 @@ type (
 		Database DatabaseConfig `yaml:"database"`
 		Hasher   HasherConfig   `yaml:"hasher"`
 		Auth     AuthConfig     `yaml:"auth"`
+		Seed     Seed           `yaml:"seed"`
 	}
 )
 

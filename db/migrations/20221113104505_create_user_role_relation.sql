@@ -1,6 +1,9 @@
 -- migrate:up
 ALTER TABLE users
-ADD COLUMN role_name VARCHAR(50);
+ADD COLUMN IF NOT EXISTS role_name VARCHAR(50);
+
+ALTER TABLE users
+DROP CONSTRAINT IF EXISTS fk_name_role_name;
 
 ALTER TABLE users
 ADD CONSTRAINT fk_name_role_name
@@ -10,8 +13,8 @@ ON DELETE SET NULL;
 
 -- migrate:down
 ALTER TABLE users
-DROP CONSTRAINT fk_name_role_name;
+DROP CONSTRAINT IF EXISTS fk_name_role_name;
 
 ALTER TABLE users
-DROP COLUMN role_name;
+DROP COLUMN IF EXISTS role_name;
 

@@ -28,7 +28,7 @@ func init() {
 	flag.StringVar(
 		&appFlag.Environment,
 		"env",
-		"dev",
+		"example",
 		"env of deployment, will load the respective yml conf file.",
 	)
 }

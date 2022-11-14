@@ -1,6 +1,17 @@
 -- migrate:up
-CREATE TYPE permission_actions AS ENUM ('READ', 'WRITE');
-CREATE TYPE permission_types AS ENUM ('GLOBAL', 'EXCLUSIVE');
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'permission_actions') THEN
+        CREATE TYPE permission_actions AS ENUM ('READ', 'WRITE');
+    END IF;
+     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'permission_actions') THEN
+        CREATE TYPE permission_actions AS ENUM ('READ', 'WRITE');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'permission_types') THEN
+        CREATE TYPE permission_types AS ENUM ('GLOBAL', 'EXCLUSIVE');
+    END IF;
+END$$;
+
 CREATE TABLE IF NOT EXISTS permissions
 (
   id VARCHAR(50) NOT NULL PRIMARY KEY,

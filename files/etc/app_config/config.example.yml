@@ -21,3 +21,8 @@ hasher:
 auth:
   accesstimeduration: 0 # in second
   accesssecretkey: ""
+
+seed:
+  admin:
+    email: ""
+    password: ""

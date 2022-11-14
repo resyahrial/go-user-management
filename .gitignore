@@ -19,3 +19,5 @@ files/etc/app_config/*.yml
 
 files/etc/env/env.*.sh
 !files/etc/env/env.example.sh
+
+db/*.sql

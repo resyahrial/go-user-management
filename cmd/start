@@ -6,7 +6,11 @@ while getopts "e:" arg; do
   esac
 done
 
-source files/etc/env/env.$Env.sh
-
 # Start the HTTP service locally
-go run ./cmd/app-http/*.go -env=$Env
+# if config on yaml file
+# go run ./cmd/app-http/*.go -env=$Env 
+
+# if config on env file
+source files/etc/env/env.$Env.sh
+docker run --rm -it --network=host -v "$(pwd)/db:/db" amacneil/dbmate -u $DATABASE_URL up
+go run ./cmd/app-http/*.go

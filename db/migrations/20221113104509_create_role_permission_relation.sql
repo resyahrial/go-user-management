@@ -7,10 +7,16 @@ CREATE TABLE IF NOT EXISTS roles_permissions
 );
 
 ALTER TABLE roles_permissions
+DROP CONSTRAINT IF EXISTS fk_name_role_name;
+
+ALTER TABLE roles_permissions
 ADD CONSTRAINT fk_name_role_name
 FOREIGN KEY (role_name)
 REFERENCES roles (name)
 ON DELETE CASCADE;
+
+ALTER TABLE roles_permissions
+DROP CONSTRAINT IF EXISTS fk_id_permission_id;
 
 ALTER TABLE roles_permissions
 ADD CONSTRAINT fk_id_permission_id
@@ -20,10 +26,10 @@ ON DELETE CASCADE;
 
 -- migrate:down
 ALTER TABLE roles_permissions
-DROP CONSTRAINT fk_id_permission_id;
+DROP CONSTRAINT IF EXISTS fk_id_permission_id;
 
 ALTER TABLE roles_permissions
-DROP CONSTRAINT fk_name_role_name;
+DROP CONSTRAINT IF EXISTS fk_name_role_name;
 
 DROP TABLE IF EXISTS role_permissions;
 
