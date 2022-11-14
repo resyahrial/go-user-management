@@ -64,6 +64,7 @@ func (s *UserRepoTestSuite) TestCreateUser() {
 				Name:     "user",
 				Email:    "user@mail.com",
 				Password: "anypassword",
+				RoleName: "USER",
 			},
 			expectedOutput: &entities.User{
 				Name:     "user",
@@ -77,6 +78,7 @@ func (s *UserRepoTestSuite) TestCreateUser() {
 				Name:     "user",
 				Email:    "user@mail.com",
 				Password: "anypassword",
+				RoleName: "USER",
 			},
 			mockErrorPersistUser: errors.New("failed to persist user"),
 			expectedError:        errors.New("failed to persist user"),
@@ -87,10 +89,10 @@ func (s *UserRepoTestSuite) TestCreateUser() {
 		s.Run(tc.name, func() {
 			s.mock.ExpectBegin()
 			s.mock.ExpectExec(`
-					INSERT INTO "users" ("id","created_at","updated_at","is_deleted","name","email","password")
-					VALUES ($1,$2,$3,$4,$5,$6,$7)
+					INSERT INTO "users" ("id","created_at","updated_at","is_deleted","name","email","password","role_name")
+					VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
 				`).
-				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), false, tc.input.Name, tc.input.Email, tc.input.Password).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), false, tc.input.Name, tc.input.Email, tc.input.Password, tc.input.RoleName).
 				WillReturnResult(sqlmock.NewResult(1, 1)).
 				WillReturnError(tc.mockErrorPersistUser)
 

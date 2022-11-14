@@ -26,5 +26,8 @@ func (u *User) ConvertToEntity() (userEntity *entities.User, err error) {
 		return
 	}
 	userEntity.ID = u.ID
+	if u.Role.Name == "" {
+		userEntity.Role = nil
+	}
 	return
 }
