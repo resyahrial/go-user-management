@@ -3,12 +3,12 @@ package models
 type Role struct {
 	Name            string `gorm:"primaryKey"`
 	Description     string
-	RolePermissions []RolePermission `gorm:"foreignKey:RoleName;references:Name"`
+	RolePermissions []RolesPermission `gorm:"foreignKey:RoleName;references:Name"`
 }
 
-type RolePermission struct {
+type RolesPermission struct {
 	ID           string `gorm:"primaryKey"`
 	RoleName     string
 	PermissionID string
-	Permission   `gorm:"foreignKey:PermissionID;references:ID"`
+	Permission   Permission `gorm:"foreignKey:PermissionID;references:ID"`
 }

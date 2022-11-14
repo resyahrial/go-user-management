@@ -6,6 +6,8 @@ import (
 
 const (
 	UserModule = "USER"
+	AdminRole  = "ADMIN"
+	UserRole   = "USER"
 )
 
 type User struct {
@@ -13,6 +15,7 @@ type User struct {
 	Name     string
 	Email    string
 	Password string
+	RoleName string
 	Role     *Role
 }
 

@@ -11,7 +11,7 @@ type User struct {
 	Email    string
 	Password string
 	RoleName string
-	Role     `gorm:"foreignKey:RoleName;references:Name"`
+	Role     Role `gorm:"foreignKey:RoleName;references:Name"`
 }
 
 func NewUserModel(userEntity *entities.User) (user *User, err error) {
