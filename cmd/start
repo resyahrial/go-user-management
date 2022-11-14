@@ -6,11 +6,11 @@ while getopts "e:" arg; do
   esac
 done
 
-
 # Start the HTTP service locally
 # if config on yaml file
 # go run ./cmd/app-http/*.go -env=$Env 
 
 # if config on env file
 source files/etc/env/env.$Env.sh
+dbmate -u $DATABASE_URL up
 go run ./cmd/app-http/*.go
