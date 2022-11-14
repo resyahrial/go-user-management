@@ -33,7 +33,7 @@ func InitRoutes(r *gin.Engine, cfg config.Config, db *gorm.DB) *gin.Engine {
 		v1_routes.CreateUserRoute(userPath)
 	}
 
-	userPathWithAuth := v1Path.Group(user, customMiddleware.Authorization())
+	userPathWithAuth := v1Path.Group(user, customMiddleware.Authorization(), customMiddleware.Authentication())
 	{
 		v1_routes.UpdateUserRoute(userPathWithAuth)
 		v1_routes.GetUserDetailRoute(userPathWithAuth)
